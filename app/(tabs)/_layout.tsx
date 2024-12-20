@@ -4,9 +4,9 @@ import { Platform, View, StyleSheet } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -17,19 +17,13 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: 'absolute',
-            backgroundColor: 'transparent',
-            borderTopWidth: 0,
-            height: 80,
-          },
-          default: {
-            backgroundColor: '#000', // Dark background
-            height: 80,
-          },
-        }),
+        tabBarBackground: () => <TabBarBackground />, // Use custom gradient background
+        tabBarStyle: {
+          position: 'absolute',
+          borderTopWidth: 0,
+          height: 80,
+          elevation: 0, // Remove shadows on Android
+        },
       }}
     >
       <Tabs.Screen
@@ -52,12 +46,7 @@ export default function TabLayout() {
           title: 'New',
           tabBarIcon: ({ color }) => (
             <View style={styles.centerTab}>
-              <IconSymbol size={28} name="plus" color="#fff" />
-            </View>
-          ),
-          tabBarButton: (props) => (
-            <View style={styles.centerTabContainer}>
-              <HapticTab {...props} />
+              <IconSymbol size={28} name="chevron.left.forwardslash.chevron.right" color="#fff" style={{transform: [{ rotate: '-45deg' }]}}/>
             </View>
           ),
         }}
@@ -85,15 +74,27 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     backgroundColor: '#333',
-    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    transform: [{ rotate: '45deg' }],
+    transform: [{ rotate: '45deg' }], // Diamond shape
   },
-  centerTabContainer: {
+  gradientBackground: {
     position: 'absolute',
-    bottom: 10,
-    alignSelf: 'center',
-    zIndex: 10,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 80, // Match tab bar height
   },
 });
+
+// Custom Gradient Background
+function TabBarBackground() {
+  return (
+    <LinearGradient
+      colors={['transparent', 'black']}
+      start={{ x: 0.5, y: 0.25 }}
+      end={{ x: 0.5, y: 1 }}  
+      style={styles.gradientBackground}
+    />
+  );
+}
