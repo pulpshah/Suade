@@ -30,6 +30,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
+          tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="house.fill" color={color} />,
         }}
       />
@@ -37,6 +38,7 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: 'Explore',
+          tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="paperplane.fill" color={color} />,
         }}
       />
@@ -44,6 +46,7 @@ export default function TabLayout() {
         name="new"
         options={{
           title: 'New',
+          tabBarShowLabel: false,
           tabBarIcon: ({ color }) => (
             <View style={styles.centerTab}>
               <IconSymbol size={28} name="chevron.left.forwardslash.chevron.right" color="#fff" style={{transform: [{ rotate: '-45deg' }]}}/>
@@ -55,6 +58,7 @@ export default function TabLayout() {
         name="test1"
         options={{
           title: 'Abcd',
+          tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="paperplane.fill" color={color} />,
         }}
       />
@@ -62,6 +66,7 @@ export default function TabLayout() {
         name="test2"
         options={{
           title: 'Efgy',
+          tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="paperplane.fill" color={color} />,
         }}
       />
@@ -76,6 +81,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 20,
     transform: [{ rotate: '45deg' }], // Diamond shape
   },
   gradientBackground: {
@@ -92,8 +98,8 @@ function TabBarBackground() {
   return (
     <LinearGradient
       colors={['transparent', 'black']}
-      start={{ x: 0.5, y: 0.25 }}
-      end={{ x: 0.5, y: 1 }}  
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 0.75 }}  
       style={styles.gradientBackground}
     />
   );
