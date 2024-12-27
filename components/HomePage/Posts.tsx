@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//////////////
 import {
   View,
   Text,
@@ -11,7 +10,9 @@ import {
   Animated,
 } from 'react-native';
 
-// Define the Post type
+// -------------------
+// Types & Mock Data
+// -------------------
 interface Slide {
   id: string;
   type: string;
@@ -37,7 +38,7 @@ interface Post {
   downvotes: number;
 }
 
-// Sample post data
+// Sample data (3 posts)
 const postsData: Post[] = [
   {
     id: '1',
@@ -55,7 +56,7 @@ const postsData: Post[] = [
         id: '2',
         type: 'Text',
         content:
-          'With the rapid development of AI, its inevitable that well encounter situations where machines are trusted with life-critical decisions. But can we fully trust an AI system when it comes to moral dilemmas or unpredictable human behavior? How do we ensure accountability if something goes wrong?',
+          'With the rapid development of AI, its inevitable that we encounter situations where machines are trusted with life-critical decisions...',
       },
     ],
     likes: 1200,
@@ -66,14 +67,35 @@ const postsData: Post[] = [
       {
         id: '1',
         username: 'thedebateguy12',
-        content:
-          'What if someone accidentally changes the whole future? Too risky IMO...',
+        content: 'What if someone accidentally changes the whole future?',
       },
       {
         id: '2',
         username: 'anotheruser',
         content:
-          '"Totally agree! Time travel should be allowed—imagine all the amazing things we could fix or learn from the past!"',
+          'Totally agree! Time travel should be allowed—imagine all the amazing things we could fix...',
+      },
+      {
+        id: '3',
+        username: 'Beckham',
+        content: 'What if you become a millionaire?',
+      },
+      {
+        id: '4',
+        username: 'Football',
+        content:
+          'I can fix it',
+      },
+      {
+        id: '5',
+        username: 'New York',
+        content: 'DO you like new york subway?',
+      },
+      {
+        id: '6',
+        username: 'Winter',
+        content:
+          'It is very cold outside',
       },
     ],
     upvotes: 1200,
@@ -94,7 +116,7 @@ const postsData: Post[] = [
         id: '2',
         type: 'Text',
         content:
-          'Imagine the chaos if people could rewrite history at will—wars, political decisions, personal grudges. Even the smallest change could ripple into unforeseen consequences for millions of lives. While its a fascinating concept, time travel could destabilize society in ways we cant even predict.',
+          'Imagine the chaos if people could rewrite history at will—wars, political decisions...',
       },
     ],
     likes: 1200,
@@ -105,14 +127,13 @@ const postsData: Post[] = [
       {
         id: '1',
         username: 'thedebateguy12',
-        content:
-          'What if someone accidentally changes the whole future? Too risky IMO...',
+        content: 'Too risky IMO...',
       },
       {
         id: '2',
         username: 'anotheruser',
         content:
-          '"Totally agree! Time travel should be allowed—imagine all the amazing things we could fix or learn from the past!"',
+          'Totally agree! Time travel should be allowed—imagine all the amazing things...',
       },
     ],
     upvotes: 1200,
@@ -134,7 +155,7 @@ const postsData: Post[] = [
         id: '2',
         type: 'Text',
         content:
-          'Studies have shown that employees who work fewer days are often more productive and happier. A shorter work week could reduce burnout, increase focus, and give people more time to spend with family or pursue hobbies. Why hasnt this been implemented widely yet?',
+          'Studies have shown employees who work fewer days are more productive and happier...',
       },
     ],
     likes: 1200,
@@ -145,14 +166,13 @@ const postsData: Post[] = [
       {
         id: '1',
         username: 'thedebateguy12',
-        content:
-          'What if someone accidentally changes the whole future? Too risky IMO...',
+        content: 'What if someone accidentally changes the whole future?',
       },
       {
         id: '2',
         username: 'anotheruser',
         content:
-          '"Totally agree! Time travel should be allowed—imagine all the amazing things we could fix or learn from the past!"',
+          'Totally agree! Time travel should be allowed—imagine the amazing things we could fix...',
       },
     ],
     upvotes: 1200,
@@ -160,50 +180,78 @@ const postsData: Post[] = [
   },
 ];
 
-const screenWidth = Dimensions.get('window').width;
-
-// This is the function coming from HomePage
+// -------------------
+// Props
+// -------------------
 interface PostsProps {
-  onAnyPostExpand: (expanded: boolean) => void;
+  expandedPostId: string | null;
+  onExpandPost: (postId: string | null) => void;
 }
 
-// -- PARENT COMPONENT: "Posts" --
-const Posts: React.FC<PostsProps> = ({ onAnyPostExpand }) => {
+const screenWidth = Dimensions.get('window').width;
+
+// -------------------
+// Main "Posts" component
+// -------------------
+const Posts: React.FC<PostsProps> = ({ expandedPostId, onExpandPost }) => {
   return (
-    <ScrollView contentContainerStyle={styles.postsContainer}>
-      {postsData.map((post) => (
-        <PostCard key={post.id} post={post} onAnyPostExpand={onAnyPostExpand} />
-      ))}
+    <ScrollView contentContainerStyle={styles.postsContainer} nestedScrollEnabled={true}>
+      {postsData.map((post) => {
+        // If there's an expanded post, only show that one
+        if (expandedPostId && expandedPostId !== post.id) {
+          return null;
+        }
+        // isExpanded = whether THIS post is the expanded one
+        const isExpanded = expandedPostId === post.id;
+
+        return (
+          <PostCard
+            key={post.id}
+            post={post}
+            isExpanded={isExpanded}
+            onToggleExpand={(expand) => {
+              // If expand = true, tell parent which post ID
+              // If expand = false, collapse to null
+              onExpandPost(expand ? post.id : null);
+            }}
+          />
+        );
+      })}
     </ScrollView>
   );
 };
 
-// -- CHILD COMPONENT: "PostCard" --
+export default Posts;
+
+// -------------------
+// Child "PostCard"
+// -------------------
 interface PostCardProps {
   post: Post;
-  onAnyPostExpand: (expanded: boolean) => void;
+  isExpanded: boolean;
+  onToggleExpand: (shouldExpand: boolean) => void;
 }
-///
-///
-const PostCard: React.FC<PostCardProps> = ({ post, onAnyPostExpand }) => {
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const slideHeight = useState(new Animated.Value(300))[0];
+
+const PostCard: React.FC<PostCardProps> = ({
+  post,
+  isExpanded,
+  onToggleExpand,
+}) => {
+  // We keep your same styling / layout
+  // The parent controls "which post is expanded"
+  // so we no longer track local state.
+
+  const [slideHeight] = useState(new Animated.Value(300));
 
   const handleSlideChange = (event: {
     nativeEvent: { contentOffset: { x: number } };
   }) => {
-    const slideIndex = Math.round(
-      event.nativeEvent.contentOffset.x / screenWidth
-    );
-    setCurrentSlideIndex(slideIndex);
+    // If you want the current slide index, you can do so here
+    // But not required for hiding other posts
   };
 
   const toggleExpansion = () => {
-    const nextValue = !isExpanded;
-    setIsExpanded(nextValue);
-    // Notify parent if we are expanding or unexpanding
-    onAnyPostExpand(nextValue);
+    onToggleExpand(!isExpanded);
   };
 
   return (
@@ -228,11 +276,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onAnyPostExpand }) => {
         {post.slides.map((slide, index) => (
           <View key={slide.id} style={[styles.slide, { width: screenWidth }]}>
             <Image source={post.image} style={styles.postImage} />
-            {/* Top Left Overlay for Slide Type */}
+
+            {/* Top Left Overlay */}
             <Text style={styles.overlayType}>{slide.type}</Text>
-            {/* Top Right Overlay for Slide Counter */}
+
+            {/* Top Right Overlay */}
             <Text style={styles.overlayCounter}>
-              {`${index + 1}/${post.slides.length}`}
+              {index + 1}/{post.slides.length}
             </Text>
 
             {/* Center Content Overlay */}
@@ -245,6 +295,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onAnyPostExpand }) => {
               <ScrollView
                 style={styles.contentScrollView}
                 showsVerticalScrollIndicator={false}
+                nestedScrollEnabled={true}
               >
                 <Text
                   style={[
@@ -288,42 +339,186 @@ const PostCard: React.FC<PostCardProps> = ({ post, onAnyPostExpand }) => {
 
       {/* Highlighted Comments */}
       <View style={styles.highlightedComments}>
-  {post.highlightedComments.map((comment, index) => (
-    <View 
-      key={comment.id} 
-      style={[
-        styles.commentContainer,
-        isExpanded ? styles.commentContainerExpanded : styles.commentContainerNormal
-      ]}
-    >
-      {/* Profile Image (Only in Expanded View) */}
-      {isExpanded && (
-        <Image
-          source={
-            index % 2 === 0
-              ? require('./assets/images/profile1.png')
-              : require('./assets/images/profile2.png')
-          }
-          style={styles.commentProfileImage}
-        />
-      )}
+  {(isExpanded ? post.highlightedComments : post.highlightedComments.slice(0, 2)).map(
+    (comment, idx) => {
+      // Check if this is the Football comment
+      const isFootballComment = comment.username === 'Football';
+      const isBeckhamComment = comment.username === 'Beckham';
 
-      {/* Comment Content */}
-      <View style={styles.commentContentContainer}>
-        <View style={styles.commentHeader}>
-          <Text style={styles.commentUsername}>{comment.username}</Text>
-          <Text style={styles.commentTime}> · 1hr</Text>
+      if (isBeckhamComment) {
+        return (
+          <View
+            key={comment.id}
+            style={[
+              styles.commentContainer,
+              isExpanded
+                ? styles.commentContainerExpanded
+                : styles.commentContainerNormal,
+            ]}
+          >
+            {/* Profile Image (visible only when expanded) */}
+            {isExpanded && (
+              <Image
+                source={require('./assets/images/profile1.png')}
+                style={styles.commentProfileImage}
+              />
+            )}
+
+            {/* Comment Content */}
+            <View style={styles.commentContentContainer}>
+              <View style={styles.commentHeader}>
+              <Text
+                style={[
+                  styles.commentUsername,
+                  { color: '#FFD700' }, // Gold color for Beckham
+                ]}
+              >
+                {comment.username}
+              </Text>
+                
+                {/* Diamond Image */}
+                <Image
+                  source={require('@/assets/images/diamond.png')}
+                  style={styles.diamondImage}
+                />
+                
+                <Text style={styles.commentTime}>· 1hr</Text>
+              </View>
+              <Text style={styles.commentContent}>{comment.content}</Text>
+
+              {isExpanded && (
+                <Text style={styles.commentReplies}>15 Replies</Text>
+              )}
+            </View>
+            <View style={styles.commentIconsContainer}>
+              <Image
+                source={require('@/assets/images/left.png')}
+                style={styles.commentBackArrow}
+              />
+              <Image
+                source={require('@/assets/images/smily.png')}
+                style={styles.commentSmiley}
+              />
+            </View>
+          </View>
+        );
+      }
+
+      if (isFootballComment) {
+        // Special Football comment style
+        return (
+          <View key={comment.id} style={styles.footballCommentWrapper}>
+          <View style={styles.footballCommentContainer}>
+            <View style={styles.commentContentContainer}>
+              <View style={styles.commentHeader}>
+                <Text style={styles.footballCommentUsername}>
+                  {comment.username}
+                </Text>
+                <Text style={styles.footballCommentTime}>
+                  · 1hr
+                </Text>
+              </View>
+              <Text style={styles.footballCommentContent}>
+                {comment.content}
+              </Text>
+              <Text style={styles.footballCommentReplies}>
+                15 Replies
+              </Text>
+            </View>
+            
+            <View style={styles.commentIconsContainer}>
+              <Image
+                source={require('@/assets/images/left.png')}
+                style={styles.commentBackArrow}
+              />
+              <Image
+                source={require('@/assets/images/smily.png')}
+                style={styles.commentSmiley}
+              />
+            </View>
+          </View>
+          <Image
+            source={require('./assets/images/profile1.png')}
+            style={styles.footballProfileImage}
+          />
         </View>
-        <Text style={styles.commentContent}>{comment.content}</Text>
+        );
+      }
 
-        {/* 15 Replies (Right-Aligned) */}
-        <Text style={styles.commentReplies}>15 Replies</Text>
-      </View>
-    </View>
-  ))}
+      // Regular comment style for all other comments
+      return (
+        <View
+              key={comment.id}
+              style={[
+                styles.commentContainer,
+                isExpanded ? styles.commentContainerExpanded : styles.commentContainerNormal,
+              ]}
+            >
+              {/* Show profile image only if expanded */}
+              {isExpanded && (
+                <Image
+                  source={
+                    idx % 3 === 0
+                      ? require('./assets/images/profile1.png')
+                      : idx % 3 === 1
+                      ? require('./assets/images/profile2.png')
+                      : require('./assets/images/profile3.png')
+                  }
+                  style={styles.commentProfileImage}
+                />
+              )}
+
+              {/* Comment Content */}
+              <View style={styles.commentContentContainer}>
+                <View style={styles.commentHeader}>
+                  <Text
+                    style={[
+                      styles.commentUsername,
+                      { color: '#fff' },
+                      !isExpanded && { fontSize: 12 },
+                    ]}
+                  >
+                    {comment.username}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.commentTime,
+                      !isExpanded && { fontSize: 10, color: '#777' },
+                    ]}
+                  >
+                    · 1hr
+                  </Text>
+                </View>
+                <Text
+                  style={[
+                    styles.commentContent,
+                    !isExpanded && { fontSize: 12, color: '#aaa', lineHeight: 16 },
+                  ]}
+                >
+                  {comment.content}
+                </Text>
+                {isExpanded && (
+                  <Text style={styles.commentReplies}>15 Replies</Text>
+                )}
+              </View>
+              {isExpanded && (
+                <View style={styles.commentIconsContainer}>
+                  <Image
+                    source={require('@/assets/images/left.png')} // Back Arrow
+                    style={styles.commentBackArrow}
+                  />
+                  <Image
+                    source={require('@/assets/images/smily.png')} // Smiley
+                    style={styles.commentSmiley}
+                  />
+                </View>
+              )}
+              
+            </View>
+      );
+    }
+  )}
 </View>
-
-
 
 
 
@@ -331,11 +526,21 @@ const PostCard: React.FC<PostCardProps> = ({ post, onAnyPostExpand }) => {
   );
 };
 
+// --------------
+// Styles (unchanged from your code)
+// --------------
 const styles = StyleSheet.create({
   postsContainer: {
     backgroundColor: '#181818',
     paddingBottom: 75,
   },
+  diamondImage: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
+    marginHorizontal: 0, // Spacing between the username and time
+  },
+  
   postCard: {
     marginBottom: 0,
     backgroundColor: '#222',
@@ -347,6 +552,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#181818',
+  },
+  commentIconsContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   profileImage: {
     width: 40,
@@ -394,11 +606,15 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 4,
   },
+  
   centerOverlay: {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: [{ translateX: -(screenWidth * 0.4) }, { translateY: -100 }],
+    transform: [
+      { translateX: -(screenWidth * 0.4) },
+      { translateY: -100 },
+    ],
     width: screenWidth * 0.8,
     maxHeight: 200,
     padding: 10,
@@ -428,7 +644,6 @@ const styles = StyleSheet.create({
   overlayContentExpanded: {
     fontSize: 16,
     lineHeight: 24,
-    textAlign: 'center',
   },
   toggleIcon: {
     position: 'absolute',
@@ -475,21 +690,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
   },
-  // highlightedComments: {
-  //   padding: 16,
-  //   backgroundColor: '#181818',
-  // },
-  comment: {
-    color: '#fff',
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  // commentUsername: {
-  //   fontWeight: 'bold',
-  //   color: '#ffcc00',
-  // },
-  // Update the commentContainer and related style
-
   highlightedComments: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -507,13 +707,11 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderRadius: 8,
   },
-  // Style for normal (unexpanded) state
   commentContainerNormal: {
     width: '100%',
     marginLeft: 0,
     alignSelf: 'center',
   },
-  // Style for expanded state
   commentContainerExpanded: {
     width: '85%',
     marginLeft: 40,
@@ -522,9 +720,8 @@ const styles = StyleSheet.create({
   commentProfileImage: {
     width: 40,
     height: 40,
-   
     position: 'absolute',
-    bottom: -10,
+    bottom: 0,
     left: -50,
     borderWidth: 2,
     borderColor: '#181818',
@@ -539,7 +736,7 @@ const styles = StyleSheet.create({
   commentUsername: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#ffcc00',
+    color: '#fff',
   },
   commentTime: {
     fontSize: 12,
@@ -556,15 +753,99 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#aaa',
     textAlign: 'right',
-  }
-  
-  
-  
-  
-  
-  
+  },
+  footballCommentUsername: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  footballCommentTime: {
+    fontSize: 12,
+    color: '#666', // Darkened for better contrast on white
+    marginLeft: 4,
+  },
+  footballCommentContent: {
+    marginTop: 4,
+    fontSize: 14,
+    color: '#000', // Changed to black for better contrast on white
+    lineHeight: 18,
+  },
+  footballCommentReplies: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#666', // Darkened for better contrast on white
+    textAlign: 'right',
+  },
+  commentBackArrow: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    marginRight: 5,
+    tintColor: '#666', // Added tint color for better contrast on white
+  },
+  commentSmiley: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    tintColor: '#666', // Added tint color for better contrast on white
+  },
+  footballCommentWrapper: {
+    position: 'relative',
+    marginBottom: 25,
+    width: '90%',
+  },
+  footballCommentContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#444',
+    position: 'relative',
+    borderRadius: 8,
+    width: '100%',
+  },
+  footballProfileImage: {
+    width: 40,
+    height: 40,
+    position: 'absolute',
+    bottom: 15,
+    right: -40,
+    borderWidth: 2,
+    borderColor: '#181818',
+  },
+  diamondBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    zIndex: -1, // Ensure it stays behind the comment content
+  },
+  beckhamCommentContainer: {
+    position: 'relative',
+    padding: 12,
+    backgroundColor: 'transparent', // To let the diamond background show
+    marginBottom: 16,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  beckhamCommentUsername: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFD700',
+  },
+  beckhamCommentTime: {
+    fontSize: 12,
+    color: '#777',
+    marginLeft: 4,
+  },
+  beckhamCommentContent: {
+    marginTop: 4,
+    fontSize: 14,
+    color: '#fff',
+    lineHeight: 18,
+  },
   
 });
-
-// Export the "Posts" component as the default
-export default Posts;

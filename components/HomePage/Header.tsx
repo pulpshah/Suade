@@ -1,12 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-////////////
+
 interface HeaderProps {
   showBackButton?: boolean;
   onBackPress?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ showBackButton = false, onBackPress }) => {
+const Header: React.FC<HeaderProps> = ({
+  showBackButton = false,
+  onBackPress,
+}) => {
   return (
     <View style={styles.headerContainer}>
       {/* Back Button */}
@@ -24,11 +27,13 @@ const Header: React.FC<HeaderProps> = ({ showBackButton = false, onBackPress }) 
       {/* Header Text */}
       <Text style={styles.headerText}>suade.</Text>
 
-      {/* Placeholder for symmetry */}
+      {/* Placeholder for alignment */}
       <View style={styles.placeholder} />
     </View>
   );
 };
+
+export default Header;
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -42,10 +47,10 @@ const styles = StyleSheet.create({
     width: 40,
     alignItems: 'center',
   },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+  backButtonImage: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
   },
   headerText: {
     fontSize: 24,
@@ -57,11 +62,4 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 40,
   },
-  backButtonImage: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-  },
 });
-
-export default Header;
