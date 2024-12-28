@@ -8,7 +8,7 @@ const Header = () => {
 
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity onPress={() => router.push('/(tabs)/explore')} style={styles.iconContainer}>
+      <TouchableOpacity onPress={() => router.push('/')} style={styles.iconContainer}>
         <Ionicons name="close" size={24} color="#fff" /> {/* X Icon */}
       </TouchableOpacity>
       <Text style={styles.headerText}>Create Post</Text>
