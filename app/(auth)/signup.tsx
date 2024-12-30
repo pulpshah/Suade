@@ -117,7 +117,7 @@ export default function Signup() {
 
           <View style={styles.loginContainer}>
             <ThemedText style={styles.loginText}>Already have an account?</ThemedText>
-            <TouchableOpacity onPress={() => router.push('/login')}>
+            <TouchableOpacity onPress={() => router.push('/onBoarding')}>
               <ThemedText style={styles.loginLink}>Log in</ThemedText>
             </TouchableOpacity>
           </View>

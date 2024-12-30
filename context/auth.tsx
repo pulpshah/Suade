@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { useSegments } from 'expo-router';
+
 type AuthContextType = {
   signIn: (email: string, password: string) => void;
   signUp: (email: string, password: string) => void;
@@ -9,6 +10,7 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
 function useProtectedRoute(user: any) {
   const segments = useSegments();
 
@@ -16,13 +18,12 @@ function useProtectedRoute(user: any) {
     const inAuthGroup = segments[0] === '(auth)';
 
     if (!user && !inAuthGroup) {
-      router.replace('/login'); 
+      router.replace('/onBoarding'); // Correct path for login
     } else if (user && inAuthGroup) {
-      router.replace('/(tabs)');
+      router.replace('/(tutorial)/intro'); // Correct path to tutorial
     }
   }, [user, segments]);
 }
-
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -32,17 +33,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = (email: string, password: string) => {
     setUser({ email });
-    router.replace('/(tabs)');
+    router.replace('/(tutorial)/intro'); // Correct path to tutorial
   };
 
   const signUp = (email: string, password: string) => {
     setUser({ email });
-    router.replace('/(tabs)');
+    router.replace('/(tutorial)/intro'); // Correct path to tutorial
   };
 
   const signOut = () => {
     setUser(null);
-    router.replace('/login');
+    router.replace('/login'); // Correct path to login
   };
 
   return (
