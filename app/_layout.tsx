@@ -1,22 +1,25 @@
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import {StyleSheet } from 'react-native';
-import 'react-native-reanimated';
-import { AuthProvider } from '../context/auth';
-import { ThemeProvider } from '../context/theme';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { StyleSheet } from "react-native";
+import "react-native-reanimated";
+import { AuthProvider } from "../context/auth";
+import { ThemeProvider } from "../context/theme";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    RocGroteskRegular: require("../assets/fonts/RocGrotesk-Regular.otf"),
+    RocGroteskBold: require("../assets/fonts/RocGrotesk-Bold.otf"),
+    NotoSans: require("../assets/fonts/NotoSans.ttf"),
   });
 
   useEffect(() => {
@@ -33,11 +36,15 @@ export default function RootLayout() {
     <AuthProvider>
       <ThemeProvider>
         <SafeAreaView style={styles.safeArea}>
-          <StatusBar style="dark" translucent={true} backgroundColor="transparent" />
+          <StatusBar
+            style="dark"
+            translucent={true}
+            backgroundColor="transparent"
+          />
           <Stack
             screenOptions={{
               headerShown: false,
-              contentStyle: { backgroundColor: 'transparent' },
+              contentStyle: { backgroundColor: "transparent" },
             }}
           >
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -52,7 +59,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: 'black', 
+    backgroundColor: "black",
     paddingTop: -10,
   },
 });

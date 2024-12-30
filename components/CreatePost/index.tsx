@@ -1,41 +1,48 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import Header from './Header';
-import CreateNav from './CreateNav';
-import PostCreation from './PostCreation';
-import TakeCreation from './TakeCreation';
-import SelectPhotos from './SelectPhotos';
+import React from "react";
+import CreatePostNavigator from "./navigation";
 
-const CreatePost = () => {
-  const [selectedScreen, setSelectedScreen] = useState('Post');
+export default function CreatePost() {
+  return <CreatePostNavigator />;
+}
 
-  return (
-    <View style={styles.container}>
-      <Header />
-      {/* <CreateNav
-        selectedScreen={selectedScreen}
-        setSelectedScreen={setSelectedScreen}
-      />
-      <ScrollView contentContainerStyle={styles.screenContainer}>
-        {selectedScreen === 'Post' && <PostCreation />}
-        {selectedScreen === 'Take' && <TakeCreation />}
-      </ScrollView> */}
-      <SelectPhotos />
-    </View>
-  );
-};
+// import React, { useState } from 'react';
+// import { ScrollView, StyleSheet, View } from 'react-native';
+// import Header from './Header';
+// import CreateNav from './CreateNav';
+// import PostCreation from './PostCreation';
+// import TakeCreation from './TakeCreation';
+// import SelectPhotos from './SelectPhotos';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#181818',
-  },
-  screenContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-});
+// const CreatePost = () => {
+//   const [selectedScreen, setSelectedScreen] = useState('Post');
 
-export default CreatePost;
+//   return (
+//     <View style={styles.container}>
+//       <Header />
+//       {/* <CreateNav
+//         selectedScreen={selectedScreen}
+//         setSelectedScreen={setSelectedScreen}
+//       />
+//       <ScrollView contentContainerStyle={styles.screenContainer}>
+//         {selectedScreen === 'Post' && <PostCreation />}
+//         {selectedScreen === 'Take' && <TakeCreation />}
+//       </ScrollView> */}
+//       <SelectPhotos />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#181818',
+//   },
+//   screenContainer: {
+//     flexGrow: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     padding: 16,
+//   },
+// });
+
+// export default CreatePost;

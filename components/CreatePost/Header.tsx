@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from Expo Vector Icons
 import { useRouter } from 'expo-router';
+import XIcon from "./assets/icons/x-icon.svg";
 
 const Header = () => {
   const router = useRouter();
@@ -9,7 +9,7 @@ const Header = () => {
   return (
     <View style={styles.headerContainer}>
       <TouchableOpacity onPress={() => router.push('/')} style={styles.iconContainer}>
-        <Ionicons name="close" size={24} color="#fff" /> {/* X Icon */}
+        <XIcon width={15} height={15} /> {/* X Icon */}
       </TouchableOpacity>
       <Text style={styles.headerText}>Create Post</Text>
       <View style={styles.placeholder} /> {/* Placeholder to balance alignment */}
