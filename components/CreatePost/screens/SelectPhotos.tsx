@@ -16,6 +16,7 @@ import CameraIcon from "../assets/icons/camera-icon.svg";
 import { useNavigation } from "@react-navigation/native";
 import { CreatePostStackParamList } from '../types';
 import Header from "../Header";
+import BottomButtons from "../BottomButtons";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type PermissionStatus = MediaLibrary.PermissionStatus;
@@ -34,6 +35,7 @@ const SelectPhotos: React.FC = () => {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [isMultipleSelection, setIsMultipleSelection] = useState(false);
   const [photos, setPhotos] = useState<Asset[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [permissionStatus, setPermissionStatus] =
     useState<PermissionStatus | null>(null);
   const [resolvedPhotos, setResolvedPhotos] = useState<{
@@ -81,6 +83,7 @@ const SelectPhotos: React.FC = () => {
 
   useEffect(() => {
     const fetchPhotos = async () => {
+      setIsLoading(true);
       try {
         const { status } = await MediaLibrary.requestPermissionsAsync();
         setPermissionStatus(status);
@@ -89,9 +92,9 @@ const SelectPhotos: React.FC = () => {
             first: 50,
             mediaType: MediaLibrary.MediaType.photo,
           });
-
+  
           setPhotos(album.assets);
-
+  
           const resolvedUris: { [key: string]: string } = {};
           await Promise.all(
             album.assets.map(async (asset) => {
@@ -105,18 +108,20 @@ const SelectPhotos: React.FC = () => {
               }
             })
           );
-
+  
           setResolvedPhotos(resolvedUris);
-
+  
           if (album.assets.length > 0 && resolvedUris[album.assets[0].id]) {
             setSelectedImage(resolvedUris[album.assets[0].id]);
           }
         }
       } catch (error) {
         console.error("Error fetching photos:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
-
+  
     fetchPhotos();
   }, []);
 
@@ -202,7 +207,7 @@ const SelectPhotos: React.FC = () => {
               >
                 <Text style={styles.selectText}>
                   {isMultipleSelection
-                    ? `Select ${selectedImages.length}` // Show the count of selected photos
+                    ? `Select ${selectedImages.length}`
                     : "Select"}
                 </Text>
               </TouchableOpacity>
@@ -221,13 +226,15 @@ const SelectPhotos: React.FC = () => {
                 alignItems: "center",
                 flexWrap: "wrap",
                 flexDirection: "row",
-                display: "flex",
                 gap: 2,
                 alignSelf: "stretch",
+                flexGrow: 1,
               }}
             >
               {photos.map((photo) => {
                 const resolvedUri = resolvedPhotos[photo.id];
+                if (!resolvedUri) return null; // Skip rendering if no URI is available
+                
                 const selectionIndex = selectedImages.indexOf(resolvedUri) + 1;
                 return (
                   <TouchableOpacity
@@ -235,15 +242,12 @@ const SelectPhotos: React.FC = () => {
                     onPress={() => handleSelectImage(photo)}
                   >
                     <View style={{ position: "relative" }}>
-                      {/* Image */}
                       <Image
-                        source={{ uri: resolvedUri || "" }}
+                        source={{ uri: resolvedUri }}
                         style={[
                           styles.photoGridImage,
-                          (selectedImage === resolvedUri &&
-                            !isMultipleSelection) ||
-                          (isMultipleSelection &&
-                            selectedImages.includes(resolvedUri))
+                          (selectedImage === resolvedUri && !isMultipleSelection) ||
+                          (isMultipleSelection && selectedImages.includes(resolvedUri))
                             ? styles.selectedBorder
                             : {},
                         ]}
@@ -269,26 +273,7 @@ const SelectPhotos: React.FC = () => {
             </ScrollView>
           </View>
         </View>
-        <View style={styles.postCreationNavOuterContainer}>
-          {/* Frame 118 */}
-          <View style={styles.postCreationNavInnerContainer}>
-            {/* Frame 84 */}
-            <View style={styles.draftsButtonOuterContainer}>
-              {/* Frame 82 */}
-              <View style={styles.draftsButtonInnerContainer}>Drafts</View>
-            </View>
-            {/* Frame 135 */}
-            <TouchableOpacity
-              onPress={handleNext}
-              style={styles.continueButtonOuterContainer}
-            >
-              {/* Frame 82 */}
-              <View style={styles.continueButtonInnerContainer}>
-                <Text style={styles.continueButtonText}>Continue</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <BottomButtons showDrafts={false} onContinue={handleNext} />
       </View>
     </ExpoLinearGradient>
   );
@@ -418,25 +403,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectionOverlay: {
-    color: "rgba(234, 242, 239, 0.25)", // Main text color
-    fontSize: 42, // Font size
-    fontWeight: "700", // Bold text
+    color: "rgba(234, 242, 239, 0.25)",
+    fontSize: 42,
+    fontWeight: "700",
     textAlign: "center",
     fontFamily: "Roc Grotesk",
-    textShadowColor: "rgba(255, 255, 255, 0.8)", // White outline with 80% opacity
-    textShadowOffset: { width: 0, height: 0 }, // Centered shadow to create an outline
-    textShadowRadius: 1.35, // Thickness of the outline
+    textShadowColor: "rgba(255, 255, 255, 0.8)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 1.35,
   },
 
   postCreationNavOuterContainer: {
     position: "absolute",
     bottom: 0,
-    left: -12,
+    left: 0,
     right: 0,
     display: "flex",
     flexDirection: "row",
     width: "100%",
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
     paddingVertical: 10,
     zIndex: 100,
@@ -445,8 +430,9 @@ const styles = StyleSheet.create({
   postCreationNavInnerContainer: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "flex-end",
+    justifyContent: "space-between", // Distributes "Drafts" and "Continue" buttons
+    alignItems: "center",
+    width: "100%", // Full width for proper spacing
   },
 
   draftsButtonOuterContainer: {
@@ -458,9 +444,32 @@ const styles = StyleSheet.create({
     gap: 10,
     borderWidth: 0.5,
     borderColor: "rgba(255, 255, 255, 0.20)",
+    marginLeft: 12,
   },
 
-  draftsButtonInnerContainer: {},
+  draftsButtonInnerContainer: {
+    display: 'flex',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(13, 9, 10, 0.40)',
+    shadowColor: 'rgba(0, 0, 0, 0.25)',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 6.221,
+  },
+
+  draftsButtonText: {
+    color: "white",
+    fontFamily: "NotoSans",
+    fontSize: 12,
+    fontStyle: "normal",
+    fontWeight: "500",
+    lineHeight: 18,
+    letterSpacing: 0.3,
+  },
 
   continueButtonOuterContainer: {
     display: "flex",
@@ -471,6 +480,7 @@ const styles = StyleSheet.create({
     gap: 10,
     borderWidth: 0.5,
     borderColor: "rgba(255, 255, 255, 0.20)",
+    marginRight: 12,
   },
 
   continueButtonInnerContainer: {

@@ -8,37 +8,48 @@ const Header = () => {
 
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity onPress={() => router.push('/')} style={styles.iconContainer}>
-        <XIcon width={15} height={15} /> {/* X Icon */}
+      <TouchableOpacity 
+        onPress={() => router.push('/')} 
+        style={styles.iconContainer}
+        accessibilityLabel="Close"
+      >
+        <XIcon width={15} height={15} />
       </TouchableOpacity>
-      <Text style={styles.headerText}>Create Post</Text>
-      <View style={styles.placeholder} /> {/* Placeholder to balance alignment */}
+      <View style={styles.textContainer}>
+        <Text style={styles.headerText}>Create Post</Text>
+      </View>
+      <View style={styles.placeholder} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: 'row', // Arrange items horizontally
-    alignItems: 'center', // Align items vertically in the center
-    justifyContent: 'space-between', // Space out elements in the container
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: 8,
     paddingHorizontal: 12,
     backgroundColor: '#000',
   },
   iconContainer: {
-    width: 50, // Reserve space for alignment
-    alignItems: 'flex-start', // Align icon to the start of the container
+    width: 50,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  textContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerText: {
-    flex: 1, // Take up the remaining space
-    textAlign: 'center', // Center the text within the available space
+    textAlign: 'center',
     fontSize: 24,
     color: '#fff',
     fontWeight: 'bold',
   },
   placeholder: {
-    width: 50, // Placeholder to balance the layout
+    width: 50,
   },
 });
 
