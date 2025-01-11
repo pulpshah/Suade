@@ -4,8 +4,10 @@ import { router } from "expo-router";
 import { useState } from "react";
 import SuadeLogo from "../../assets/icons/suade-logo.svg";
 import { ThemedText } from "@/components/ThemedText";
+import { useAuth } from "@/context/auth";
 
 export default function Signup() {
+  const { signUp } = useAuth(); // Access signUp from the Auth context
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,7 +16,7 @@ export default function Signup() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const handleSignup = () => {
-    router.replace("/onBoarding"); // Redirect to onboarding flow after signup
+    signUp(email, password); 
   };
 
   return (
@@ -119,10 +121,7 @@ export default function Signup() {
             {/* Create Account Button */}
             <TouchableOpacity style={styles.createAccountOuterContainer} onPress={handleSignup}>
               <ExpoLinearGradient
-                colors={[
-                  "rgba(113, 128, 185, 0.8)",
-                  "rgba(234, 242, 239, 0.8)",
-                ]}
+                colors={["rgba(113, 128, 185, 0.8)", "rgba(234, 242, 239, 0.8)"]}
                 locations={[0, 1]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -194,7 +193,7 @@ const styles = StyleSheet.create({
     color: "#9CA3AF",
     marginBottom: 24,
     textAlign: "center",
-    fontFamily: "NotoSans"
+    fontFamily: "NotoSans",
   },
   nameContainer: {
     flexDirection: "row",
@@ -288,7 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "white",
     fontWeight: "500",
-    fontFamily: "NotoSans"
+    fontFamily: "NotoSans",
   },
   loginContainer: {
     flexDirection: "row",
@@ -309,6 +308,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: "NotoSans"
+    fontFamily: "NotoSans",
   },
 });

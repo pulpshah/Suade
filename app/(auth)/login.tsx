@@ -14,7 +14,6 @@ export default function Login() {
 
   const handleLogin = () => {
     signIn(email, password);
-    router.replace("/onBoarding"); // Redirect to onboarding flow after login
   };
 
   return (

@@ -15,14 +15,16 @@ function useProtectedRoute(user: any) {
   const segments = useSegments();
 
   useEffect(() => {
-    const inAuthGroup = segments[0] === '(auth)';
+    const inAuthGroup = segments[0] === "(auth)";
+    const inOnboarding = segments[0] === "onBoarding";
+    const inTabs = segments[0] === "(tabs)";
 
     if (!user && !inAuthGroup) {
-      // Unauthenticated users are sent to the Landing screen
-      router.replace('/landing');
+      router.replace("/landing"); // Redirect unauthenticated users to landing
     } else if (user && inAuthGroup) {
-      // Authenticated users skip Login/Signup and go to Onboarding
-      router.replace('/onBoarding');
+      router.replace("/onBoarding"); // Redirect authenticated users to onboarding
+    } else if (user && inOnboarding) {
+      router.replace("/(tutorial)/intro"); 
     }
   }, [user, segments]);
 }
