@@ -17,13 +17,13 @@ export default function Intro() {
         {/* Header */}
         <Header
           showBackButton={false}
-          onBackPress={() => router.push('/(tabs)')} 
+          onBackPress={() => router.push('/(tabs)')}
         />
         {/* Main Content */}
         <View style={styles.container}>
           <View style={styles.contentCenter}>
             <Text style={styles.title}>Welcome to suade!</Text>
-            <TouchableOpacity onPress={() => router.push('/(tabs)')}>
+            <TouchableOpacity onPress={() => router.replace('/(tabs)')}>
               <LinearGradient
                 colors={['#DC7AA1', '#EAF2EF']}
                 locations={[0, 0.8]}

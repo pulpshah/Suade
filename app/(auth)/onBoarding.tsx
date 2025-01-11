@@ -11,8 +11,7 @@ export default function Onboarding() {
     if (currentStep < 2) {
       setCurrentStep(currentStep + 1);
     } else {
-      router.push("/login");
-      console.log("Onboarding complete!");
+      router.replace("/(tutorial)/intro");
     }
   };
 
@@ -31,6 +30,8 @@ export default function Onboarding() {
 
   return <>{renderStep()}</>;
 }
+
+
 
 
 

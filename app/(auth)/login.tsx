@@ -1,31 +1,43 @@
-// app/(auth)/login.tsx
-import { View, TextInput, TouchableOpacity, Image, ImageBackground, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import { useState } from 'react';
-import { ThemedText } from '@/components/ThemedText';
-import { useAuth } from '@/context/auth';
+import { View, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import { useState } from "react";
+import SuadeLogo from "../../assets/icons/suade-logo.svg";
+import { ThemedText } from "@/components/ThemedText";
+import { useAuth } from "@/context/auth";
+
 export default function Login() {
-    const { signIn } = useAuth();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [rememberMe, setRememberMe] = useState(false);
-  
-    const handleLogin = () => {
-      signIn(email, password); // This will now directly navigate to tabs
-    };
+  const { signIn } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const handleLogin = () => {
+    signIn(email, password);
+    router.replace("/onBoarding"); // Redirect to onboarding flow after login
+  };
 
   return (
-    <ImageBackground
-      source={require('@/assets/images/Background.png')}
-      style={styles.container}
+    <ExpoLinearGradient
+      colors={["#4B6897", "#455581"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradient}
     >
-      <View style={styles.overlay}>
-        <View style={styles.card}>
-          <ThemedText style={styles.logo}>suade.</ThemedText>   
+      <View style={styles.blackOverlay}>
+        <View style={styles.outerContainer}>
+          {/* Suade Logo */}
+          <View style={styles.logoContainer}>
+            <SuadeLogo />
+          </View>
 
+          {/* Header */}
           <ThemedText style={styles.title}>Log in to your account</ThemedText>
-          <ThemedText style={styles.subtitle}>Welcome back! Please enter your details.</ThemedText>
+          <ThemedText style={styles.subtitle}>
+            Welcome back! Please enter your details.
+          </ThemedText>
 
+          {/* Input Fields */}
           <View style={styles.inputContainer}>
             <ThemedText style={styles.label}>Email</ThemedText>
             <TextInput
@@ -51,6 +63,7 @@ export default function Login() {
             />
           </View>
 
+          {/* Options */}
           <View style={styles.optionsContainer}>
             <TouchableOpacity
               style={styles.checkboxContainer}
@@ -62,148 +75,167 @@ export default function Login() {
               <ThemedText style={styles.rememberText}>Remember for 30 days</ThemedText>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push('/')}>
+            <TouchableOpacity onPress={() => router.push("/")}>
               <ThemedText style={styles.forgotPassword}>Forgot password</ThemedText>
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
-            <ThemedText style={styles.signInText}>Sign in</ThemedText>
+          {/* Sign In Button */}
+          <TouchableOpacity style={styles.signInOuterContainer} onPress={handleLogin}>
+            <ExpoLinearGradient
+              colors={[
+                "rgba(113, 128, 185, 0.8)",
+                "rgba(234, 242, 239, 0.8)",
+              ]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.signInInnerContainer}
+            >
+              <ThemedText style={styles.buttonText}>Sign in</ThemedText>
+            </ExpoLinearGradient>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.googleButton}>
-            <Image
-              source={require('@/assets/images/Social icon.png')}
-              style={styles.googleIcon}
-            />
-            <ThemedText style={styles.googleText}>Sign in with Google</ThemedText>
+          {/* Google Sign-in Button */}
+          <TouchableOpacity style={styles.googleOuterContainer}>
+            <View style={styles.googleInnerContainer}>
+              <Image
+                source={require("@/assets/images/Social icon.png")}
+                style={styles.googleIcon}
+              />
+              <ThemedText style={styles.googleText}>Sign in with Google</ThemedText>
+            </View>
           </TouchableOpacity>
 
+          {/* Signup Link */}
           <View style={styles.signupContainer}>
             <ThemedText style={styles.signupText}>Don't have an account?</ThemedText>
-            <TouchableOpacity onPress={() => router.push('/signup')}>
+            <TouchableOpacity onPress={() => router.push("/signup")}>
               <ThemedText style={styles.signupLink}>Sign up</ThemedText>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-    </ImageBackground>
+    </ExpoLinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
     flex: 1,
   },
-  overlay: {
+  blackOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+  },
+  outerContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 40,
-    width: '100%',
-    maxWidth: 400,
-    marginTop: 20,
-  },
-  logo: {
-    fontSize: 25,
-    fontWeight: '700',
-    color: '#111827',
+  logoContainer: {
     marginBottom: 24,
-    textAlign: 'center',
-    letterSpacing: -1,
   },
   title: {
     fontSize: 24,
-    fontWeight: '600',
-    color: '#111827',
+    fontWeight: "700",
+    fontFamily: "RocGroteskBold",
+    color: "rgba(255, 255, 255, 0.95)",
     marginBottom: 8,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: '#6B7280',
+    color: "#9CA3AF",
+    fontFamily: "NotoSans",
     marginBottom: 24,
+    textAlign: "center",
   },
   inputContainer: {
+    width: "100%",
     marginBottom: 16,
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: "500",
+    color: "#D1D5DB",
     marginBottom: 6,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     padding: 12,
     fontSize: 16,
-    color: '#111827',
+    color: "white",
   },
   optionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 24,
+    width: "100%",
   },
   checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   checkbox: {
     width: 20,
     height: 20,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 4,
+    borderColor: "#D1D5DB",
     marginRight: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   checkboxChecked: {
-    backgroundColor: '#7C3AED',
-    borderColor: '#7C3AED',
+    backgroundColor: "#7C3AED",
+    borderColor: "#7C3AED",
   },
   checkmark: {
-    color: 'white',
+    color: "white",
     fontSize: 14,
   },
   rememberText: {
     fontSize: 14,
-    color: '#374151',
+    color: "#D1D5DB",
   },
   forgotPassword: {
     fontSize: 14,
-    color: '#7C3AED',
-    fontWeight: '500',
+    color: "#7C3AED",
+    fontWeight: "500",
   },
-  signInButton: {
-    backgroundColor: '#7C3AED',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
+  signInOuterContainer: {
+    width: "100%",
+    padding: 2,
+    borderWidth: 0.5,
+    borderColor: "rgba(255, 255, 255, 0.2)",
     marginBottom: 16,
   },
-  signInText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
+  signInInnerContainer: {
+    paddingVertical: 18,
+    paddingHorizontal: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
   },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    padding: 12,
+  googleOuterContainer: {
+    width: "100%",
+    padding: 2,
+    borderWidth: 0.5,
+    borderColor: "rgba(255, 255, 255, 0.2)",
     marginBottom: 24,
+  },
+  googleInnerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
   },
   googleIcon: {
     width: 24,
@@ -212,22 +244,30 @@ const styles = StyleSheet.create({
   },
   googleText: {
     fontSize: 16,
-    color: '#374151',
-    fontWeight: '500',
+    color: "white",
+    fontWeight: "500",
+    fontFamily: "NotoSans"
   },
   signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 16,
   },
   signupText: {
     fontSize: 14,
-    color: '#374151',
+    color: "#D1D5DB",
     marginRight: 4,
   },
   signupLink: {
     fontSize: 14,
-    color: '#7C3AED',
-    fontWeight: '500',
+    color: "#7C3AED",
+    fontWeight: "500",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+    fontFamily: "NotoSans"
   },
 });

@@ -17,7 +17,9 @@ import OccupationStep from "./IdentitySteps/OccupationStep";
 import EducationStep from "./IdentitySteps/EducationStep";
 
 const Identity = ({ onComplete }: { onComplete: () => void }) => {
+  const [showIntro, setShowIntro] = useState(true);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -89,8 +91,51 @@ const Identity = ({ onComplete }: { onComplete: () => void }) => {
     }
   };
   
-  // // Adjusted displayed step index
-  // const displayedStepIndex = currentStepIndex > 2 ? currentStepIndex - 1 : currentStepIndex;
+  // if (showIntro) {
+  //   return (
+  //     <KeyboardAvoidingView
+  //       behavior={Platform.OS === "ios" ? "padding" : undefined}
+  //       style={{ flex: 1 }}
+  //     >
+  //       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+  //         <ExpoLinearGradient
+  //           colors={["#4B6897", "#455581"]}
+  //           start={{ x: 0, y: 0 }}
+  //           end={{ x: 1, y: 1 }}
+  //           style={styles.introScreenGradient}
+  //         >
+  //           <View style={styles.introScreenBlackOverlay}>
+  //             <View style={styles.starIconOutermostContainer}>
+  //               <View style={styles.starIconOuterContainer}>
+  //                 <View style={styles.starIconInnerContainer}>
+  //                   <View style={styles.imageOuterContainer}>
+  //                     <ExpoLinearGradient
+  //                       colors={["#912F56", "#7180B9"]}
+  //                       start={{ x: 0, y: 0.5 }}
+  //                       end={{ x: 1, y: 0.5 }}
+  //                       style={styles.imageInnerContainer}
+  //                     >
+  //                       <StarIcon width={101} height={101} />
+  //                     </ExpoLinearGradient>
+  //                   </View>
+  //                 </View>
+  //               </View>
+  //             </View>
+  
+  //             {/* Arrow Button */}
+  //             <View style={styles.nextButtonOuterContainer}>
+  //               <View style={[styles.arrowContainer, styles.arrowContainerActive]}>
+  //                 <TouchableOpacity onPress={() => setShowIntro(false)} style={styles.arrowButton}>
+  //                   <WhiteArrow />
+  //                 </TouchableOpacity>
+  //               </View>
+  //             </View>
+  //           </View>
+  //         </ExpoLinearGradient>
+  //       </TouchableWithoutFeedback>
+  //     </KeyboardAvoidingView>
+  //   );
+  // }
 
   return (
     <KeyboardAvoidingView
@@ -214,6 +259,70 @@ const Identity = ({ onComplete }: { onComplete: () => void }) => {
 };
 
 const styles = StyleSheet.create({
+  introScreenGradient: {
+    flex: 1,
+  },
+  introScreenBlackOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+  },
+  starIconOutermostContainer: {
+    paddingVertical: 80,
+    paddingHorizontal: 24,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 72
+  },
+  starIconOuterContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 18
+  },
+  starIconInnerContainer: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 18
+  },
+  imageOuterContainer: {
+    display: "flex",
+    width: 180,
+    height: 180,
+    padding: 9.2,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 55,
+    borderWidth: 2.3,
+    borderColor: "#EAF2EF",
+  },
+  imageInnerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 55,
+    borderWidth: 2.3,
+    borderColor: "rgba(234, 242, 239, 0.50)",
+  },
+  introArrowContainer: {
+    position: "absolute",
+    bottom: 30,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  introArrowButton: {
+    transform: [{ rotate: "-45deg" }],
+    borderRadius: 2.25,
+    borderWidth: 2.25,
+    borderColor: "#FFF",
+    backgroundColor: "rgba(234, 242, 239, 0.25)",
+    padding: 7.661,
+  },
   outerContainer: {
     flex: 1,
   },
