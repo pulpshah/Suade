@@ -1,33 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import SuadeLogo from "../../assets/icons/suade-logo.svg";
 
 export default function Landing() {
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 4000);
-    return () => clearTimeout(timer);
-  }, []);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => setLoading(false), 4000);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
-  if (loading) {
-    return (
-      <ExpoLinearGradient
-        colors={["#4B6897", "#455581"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
-      >
-        <View style={styles.blackOverlay}>
-          <View style={styles.logoCenteredContainer}>
-            <SuadeLogo />
-          </View>
-        </View>
-      </ExpoLinearGradient>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <ExpoLinearGradient
+  //       colors={["#4B6897", "#455581"]}
+  //       start={{ x: 0, y: 0 }}
+  //       end={{ x: 1, y: 1 }}
+  //       style={styles.gradient}
+  //     >
+  //       <View style={styles.blackOverlay}>
+  //         <View style={styles.logoCenteredContainer}>
+  //           <Text style={styles.suadeText}>suade</Text>
+  //         </View>
+  //       </View>
+  //     </ExpoLinearGradient>
+  //   );
+  // }
 
   return (
     <ExpoLinearGradient
@@ -39,38 +38,27 @@ export default function Landing() {
       <View style={styles.blackOverlay}>
         <View style={styles.outerContainer}>
           <View style={styles.logoAndHeaderContainer}>
+            <Image source={require("@/assets/images/bubble.png")} style={styles.bubbleImage} />
             <View style={styles.logoContainer}>
-              <SuadeLogo />
+              <Text style={styles.suadeText}>suade</Text>
             </View>
-            <Text style={styles.headerText}>What's your take?</Text>
           </View>
           <View style={styles.buttonContainer}>
-            {/* Create Account Button */}
             <TouchableOpacity
-              onPress={() => router.push("/signup")}
+              onPress={() => router.push("/onBoarding")}
               style={styles.createAccountOuterContainer}
             >
-              <ExpoLinearGradient
-                colors={[
-                  "rgba(113, 128, 185, 0.8)",
-                  "rgba(234, 242, 239, 0.8)",
-                ]}
-                locations={[0, 1]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.createAccountInnerContainer}
-              >
-                <Text style={styles.buttonText}>Create Account</Text>
-              </ExpoLinearGradient>
+              <View style={[styles.createAccountInnerContainer, { backgroundColor: "#4D4D4D" }]}>
+                <Text style={styles.buttonText}>Sign Up</Text>
+              </View>
             </TouchableOpacity>
 
-            {/* Sign In Button */}
             <TouchableOpacity
               onPress={() => router.push("/login")}
               style={styles.signInOuterContainer}
             >
               <View style={styles.signInInnerContainer}>
-                <Text style={styles.buttonText}>Sign In</Text>
+                <Text style={styles.buttonText}>Login</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -90,7 +78,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    backgroundColor: "#000000",
   },
   outerContainer: {
     flex: 1,
@@ -108,7 +96,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 16,
   },
-  logoContainer: {},
+  logoContainer: {
+    position: "absolute",
+    top: "70%",
+    left: "46%", 
+    transform: [{ translateX: -60 }, { translateY: -15 }],
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  suadeText: {
+    fontSize: 50,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  bubbleImage: {
+    position: "relative",
+    width: 250,
+    height: 150,
+    resizeMode: "contain",
+    marginTop: 180,
+    alignSelf: "center",
+  },
+  
   headerText: {
     fontFamily: "RocGroteskBold",
     fontSize: 20,
