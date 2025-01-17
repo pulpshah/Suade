@@ -1,36 +1,41 @@
-// app/(auth)/login.tsx
-import { View, TextInput, TouchableOpacity, Image, ImageBackground, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import { useState } from 'react';
-import { ThemedText } from '@/components/ThemedText';
-import { useAuth } from '@/context/auth';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { router } from "expo-router";
+import { useAuth } from "@/context/auth";
+
 export default function Login() {
-    const { signIn } = useAuth();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [rememberMe, setRememberMe] = useState(false);
-  
-    const handleLogin = () => {
-      signIn(email, password); // This will now directly navigate to tabs
-    };
+  const { signIn } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const handleLogin = () => {
+    signIn(email, password);
+  };
 
   return (
-    <ImageBackground
-      source={require('@/assets/images/Background.png')}
-      style={styles.container}
-    >
-      <View style={styles.overlay}>
-        <View style={styles.card}>
-          <ThemedText style={styles.logo}>suade.</ThemedText>   
+    <View style={styles.gradient}>
+      <View style={styles.blackOverlay}>
+        <View style={styles.outerContainer}>
+          {/* Back Arrow */}
+          <TouchableOpacity style={styles.backArrow} onPress={() => router.push("/")}>
+            <Text style={styles.backArrowText}>{"<"}</Text>
+          </TouchableOpacity>
 
-          <ThemedText style={styles.title}>Log in to your account</ThemedText>
-          <ThemedText style={styles.subtitle}>Welcome back! Please enter your details.</ThemedText>
+          {/* Bubble and Suade Text */}
+          <View style={styles.logoAndHeaderContainer}>
+            <View style={styles.bubbleWrapper}>
+              <Image source={require("@/assets/images/bubble.png")} style={styles.bubbleImage} />
+              <Text style={styles.suadeText}>suade</Text>
+            </View>
+          </View>
 
+          {/* Input Fields */}
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>Email</ThemedText>
+            <Text style={styles.inputLabel}>Username</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter your email"
+              placeholder="Enter your username"
               placeholderTextColor="#6B7280"
               value={email}
               onChangeText={setEmail}
@@ -40,194 +45,162 @@ export default function Login() {
           </View>
 
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>Password</ThemedText>
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              placeholderTextColor="#6B7280"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
+            <Text style={styles.inputLabel}>Password</Text>
+            <View style={styles.passwordWrapper}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Enter your password"
+                placeholderTextColor="#6B7280"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!passwordVisible}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={() => setPasswordVisible(!passwordVisible)}
+              >
+                <Image
+                  source={
+                    passwordVisible
+                      ? require("@/assets/images/eye-visible.png")
+                      : require("@/assets/images/eye-hidden.png")
+                  }
+                  style={styles.eyeIcon}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <View style={styles.optionsContainer}>
-            <TouchableOpacity
-              style={styles.checkboxContainer}
-              onPress={() => setRememberMe(!rememberMe)}
-            >
-              <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
-                {rememberMe && <ThemedText style={styles.checkmark}>✓</ThemedText>}
-              </View>
-              <ThemedText style={styles.rememberText}>Remember for 30 days</ThemedText>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => router.push('/')}>
-              <ThemedText style={styles.forgotPassword}>Forgot password</ThemedText>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
-            <ThemedText style={styles.signInText}>Sign in</ThemedText>
+          {/* Login Button */}
+          <TouchableOpacity style={styles.signInOuterContainer} onPress={handleLogin}>
+            <View style={styles.signInInnerContainer}>
+              <Text style={styles.buttonText}>Log in</Text>
+            </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.googleButton}>
-            <Image
-              source={require('@/assets/images/Social icon.png')}
-              style={styles.googleIcon}
-            />
-            <ThemedText style={styles.googleText}>Sign in with Google</ThemedText>
+          {/* Forgot Password */}
+          <TouchableOpacity onPress={() => router.push("/login")}>
+            <Text style={styles.forgotPassword}>Forgot your password?</Text>
           </TouchableOpacity>
-
-          <View style={styles.signupContainer}>
-            <ThemedText style={styles.signupText}>Don't have an account?</ThemedText>
-            <TouchableOpacity onPress={() => router.push('/signup')}>
-              <ThemedText style={styles.signupLink}>Sign up</ThemedText>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
     flex: 1,
   },
-  overlay: {
+  blackOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#000000",
+  },
+  outerContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 40,
-    width: '100%',
-    maxWidth: 400,
-    marginTop: 20,
+  backArrow: {
+    position: "absolute",
+    top: 40,
+    left: 20,
   },
-  logo: {
-    fontSize: 25,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 24,
-    textAlign: 'center',
-    letterSpacing: -1,
+  backArrowText: {
+    fontSize: 20,
+    color: "#FFFFFF",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 8,
+  logoAndHeaderContainer: {
+    alignItems: "center",
+    marginBottom: 40,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginBottom: 24,
+  bubbleWrapper: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bubbleImage: {
+    width: 250,
+    height: 150,
+    resizeMode: "contain",
+  },
+  suadeText: {
+    position: "absolute",
+    fontSize: 50,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textAlign: "center",
   },
   inputContainer: {
+    width: "100%",
     marginBottom: 16,
   },
-  label: {
+  inputLabel: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#374151',
-    marginBottom: 6,
+    color: "#FFFFFF",
+    marginBottom: 4,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "rgba(255, 255, 255, 0.12)",
     padding: 12,
     fontSize: 16,
-    color: '#111827',
+    color: "white",
+    borderRadius: 8,
   },
-  optionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
+  passwordWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 0.5,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "rgba(255, 255, 255, 0.12)",
+    borderRadius: 8,
   },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  passwordInput: {
+    flex: 1,
+    padding: 12,
+    fontSize: 16,
+    color: "white",
   },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 4,
-    marginRight: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+  eyeButton: {
+    padding: 12,
   },
-  checkboxChecked: {
-    backgroundColor: '#7C3AED',
-    borderColor: '#7C3AED',
+  eyeIcon: {
+    width: 25,
+    height: 18,
+    tintColor: "#FFFFFF",
   },
-  checkmark: {
-    color: 'white',
-    fontSize: 14,
+  signInOuterContainer: {
+    width: "100%",
+    marginBottom: 16,
+    borderRadius: 8,
   },
-  rememberText: {
-    fontSize: 14,
-    color: '#374151',
+  signInInnerContainer: {
+    backgroundColor: "rgba(13, 9, 10, 0.4)",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    boxShadow: "0px 0px 6.221px 0px rgba(0, 0, 0, 0.25) inset",
+    backdropFilter: "blur(12px)",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
   },
   forgotPassword: {
     fontSize: 14,
-    color: '#7C3AED',
-    fontWeight: '500',
-  },
-  signInButton: {
-    backgroundColor: '#7C3AED',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  signInText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 24,
-  },
-  googleIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 12,
-  },
-  googleText: {
-    fontSize: 16,
-    color: '#374151',
-    fontWeight: '500',
-  },
-  signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  signupText: {
-    fontSize: 14,
-    color: '#374151',
-    marginRight: 4,
-  },
-  signupLink: {
-    fontSize: 14,
-    color: '#7C3AED',
-    fontWeight: '500',
+    color: "#FFFF",
+    marginTop: 12,
   },
 });
