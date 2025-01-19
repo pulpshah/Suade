@@ -5,7 +5,7 @@ const TEXT_STYLES: { [key: string]: TextStyle } = {
         fontFamily: 'NotoSans',
         fontWeight: '600',
         fontSize: 12,
-        lineHeight: 14.8,
+        lineHeight: 14.4,
         letterSpacing: 0.3,
     },
     interactionStat: {
@@ -97,7 +97,23 @@ const TEXT_STYLES: { [key: string]: TextStyle } = {
         fontSize: 12,
         lineHeight: 14.4,
         letterSpacing: 0.3
-    }
+    },
+    timePickerNumber: {
+        fontFamily: "RocGroteskBold",
+        fontSize: 18,
+        fontStyle: 'normal',
+        fontWeight: 700,
+        lineHeight: 21.6,
+        letterSpacing: .2
+    },
+    timePickerLetters: {
+        fontFamily: "NotoSans",
+        fontSize: 11.2,
+        fontStyle: 'normal',
+        fontWeight: 600,
+        lineHeight: 5.92,
+        letterSpacing: .12
+    },
 }
 
 const COLORS = {

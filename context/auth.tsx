@@ -16,15 +16,22 @@ function useProtectedRoute(user: any) {
 
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
-    const inOnboarding = segments[0] === "onBoarding";
+    const inOnboarding = segments[1] === "onBoarding";
+    const inPersonaLab = segments[1] === "personaLab"; // Check for personaLab
     const inTabs = segments[0] === "(tabs)";
 
+    console.log("Segments:", segments);
+    console.log("User:", user);
+
     if (!user && !inAuthGroup) {
-      router.replace("/landing"); // Redirect unauthenticated users to landing
-    } else if (user && inAuthGroup) {
-      router.replace("/onBoarding"); // Redirect authenticated users to onboarding
-    } else if (user && inOnboarding) {
-      router.replace("/(tutorial)/intro"); 
+      console.log("Redirecting to /landing");
+      router.replace("/landing");
+    } else if (user && inAuthGroup && !inPersonaLab && !inOnboarding) {
+      // Redirect to onboarding unless already in personaLab or onboarding
+      console.log("Redirecting to /onBoarding");
+      router.replace("/onBoarding");
+    } else if (user && inPersonaLab) {
+      console.log("User is in PersonaLab. No redirection.");
     }
   }, [user, segments]);
 }

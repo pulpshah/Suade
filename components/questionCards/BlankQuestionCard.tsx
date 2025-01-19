@@ -2,18 +2,26 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
-import { TEXT_STYLES, COLORS, GRADIENTS } from "@/app/styles";
-import ValidColoredIcon from "@/assets/icons/valid-colored-icon.svg";
+import { TEXT_STYLES, COLORS } from "@/app/styles";
 
-export default function SwipedRightValidCard() {
+export default function BlankQuestionCard() {
     return (
         <View style={styles.outerContainer}>
             {/* Blurred Glow Background */}
             <BlurView intensity={50} style={styles.blurContainer}>
                 <LinearGradient
-                    colors={GRADIENTS.validBlue.colors}
-                    start={GRADIENTS.validBlue.start}
-                    end={GRADIENTS.validBlue.end} 
+                    colors={[
+                        "rgba(234, 242, 239, 0.2)", // Light teal
+                        "rgba(130, 177, 254, 0.3)", // Light blue
+                        "#4F74FF",                   // Blue
+                        "#FF759A",                   // Light pink
+                        "#FF4690",                   // Bright pink
+                        "#FFD6A3",                   // Light yellow
+                        "#FFCC75",                   // Golden yellow
+                    ]}
+                    locations={[0, 0.2, 0.4, 0.5, 0.6, 0.8, 1]}
+                    start={{ x: 1, y: 0 }}
+                    end={{ x: 0, y: 1 }}
                     style={styles.gradientBackground}
                 />
             </BlurView>
@@ -21,16 +29,8 @@ export default function SwipedRightValidCard() {
             {/* Card Component */}
             <View style={styles.swipableCardContainer}>
                 <View style={styles.headerContainer}>
-                    <Text style={styles.headerText}>Question</Text>
-                    <View style={styles.coloredIconAndTextContainer}>
-                        <Text style={styles.validText}>Valid</Text>
-                        <ValidColoredIcon width={23.78} height={23.78} />
-                    </View>
                 </View>
                 <View style={styles.questionTextContainer}>
-                    <Text style={styles.questionText}>
-                        Adults who enjoy sour candy aren’t very mature.
-                    </Text>
                 </View>
             </View>
         </View>
@@ -86,19 +86,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 0,
         alignSelf: "stretch",
     },
-    coloredIconAndTextContainer: {
-        flexDirection: 'row',
-        gap: 8,
+    grayIconContainer: {
+        width: 32,
+        height: 32,
         justifyContent: "center",
         alignItems: "center",
-    },
-    validText: {
-        ...TEXT_STYLES.inputText,
-        color: "#FFF",
-        textShadowColor: "rgba(31, 31, 31, 0.20)",
-        textShadowOffset: { width: 0, height: 1.5 },
-        textShadowRadius: 4,
-        opacity: .6
+        opacity: 0.6,
+        shadowColor: "#282828",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.6,
+        shadowRadius: 6,
     },
     grayIcon: {
         flexShrink: 0,

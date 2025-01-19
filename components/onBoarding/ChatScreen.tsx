@@ -132,7 +132,9 @@ const formatPhoneNumber = (input: string): string => {
         },
       ]);
       setInput("");
-      // Here you would typically proceed to the next step or complete the flow
+      setTimeout(() => {
+        router.replace("/(auth)/personaLab"); // Ensure correct path
+      }, 1500);
     } else {
       setIsInvalid(true);
       setMessages((prevMessages) => [
@@ -398,6 +400,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     marginTop: 20,
+    
   },
   chatContainer: {
     flexGrow: 1,

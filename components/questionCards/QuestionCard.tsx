@@ -2,19 +2,21 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { TEXT_STYLES, COLORS } from "@/app/styles";
 
-export default function QuestionCard() {
+// Define props type
+type QuestionCardProps = {
+    questionNumber: number,
+    questionText: string;
+};
+
+export default function QuestionCard({ questionNumber, questionText }: QuestionCardProps) {
     return (
         <View style={styles.outerContainer}>
             <View style={styles.swipableCardContainer}>
                 <View style={styles.headerContainer}>
-                    <Text style={styles.headerText}>
-                        Question
-                    </Text>
+                    <Text style={styles.headerText}>Question {questionNumber}</Text>
                 </View>
                 <View style={styles.questionTextContainer}>
-                    <Text style={styles.questionText}>
-                        Adults who enjoy sour candy aren’t very mature.
-                    </Text>
+                    <Text style={styles.questionText}>{questionText}</Text>
                 </View>
             </View>
         </View>
@@ -23,46 +25,43 @@ export default function QuestionCard() {
 
 const styles = StyleSheet.create({
     outerContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
         gap: 10,
         padding: 2,
-        flexDirection: 'column',
-        alignSelf: 'stretch',
+        flexDirection: "column",
+        alignSelf: "stretch",
         borderRadius: 14,
         borderWidth: 0.5,
-        borderColor: COLORS.suadeShadesCardOutline
+        borderColor: COLORS.suadeShadesCardOutline,
     },
     swipableCardContainer: {
         paddingVertical: 8,
         paddingHorizontal: 12,
         gap: 12,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        alignSelf: 'stretch',
+        flexDirection: "column",
+        alignItems: "flex-end",
+        alignSelf: "stretch",
         borderRadius: 14,
-        backdropFilter: 'blur(32px)',
-        backgroundColor: COLORS.suadeShadesBlack
+        backgroundColor: COLORS.suadeShadesBlack,
+        paddingBottom: 16,
     },
     headerContainer: {
-        display: 'flex',
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "stretch",
         paddingVertical: 8,
-        paddingHorizontal: 0,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        alignSelf: 'stretch',
-        flexDirection: 'row',
     },
     headerText: {
         ...TEXT_STYLES.commentUsernameTextMedium,
-        color: 'white',
+        color: "white",
     },
     questionTextContainer: {
-
+        alignSelf: "stretch",
     },
     questionText: {
         ...TEXT_STYLES.medium,
-        color: 'white',
-    }
-})
+        color: "white",
+    },
+});
