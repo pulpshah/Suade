@@ -132,6 +132,9 @@ export default function ChatScreen() {
         },
       ]);
       setInput("");
+      setTimeout(() => {
+        router.replace("/(auth)/personaLab"); // Ensure correct path
+      }, 1500);
     } else {
       setIsInvalid(true);
       setMessages((prevMessages) => [
@@ -276,19 +279,19 @@ export default function ChatScreen() {
               Otherwise, use the normal black system bubble.
             */}
             {isSpecialMessage ? (
-  <LinearGradient
-    colors={["#2D2128", "#3A2B33"]} // tweak as needed
-    start={{ x: 0, y: 0.5 }}
-    end={{ x: 1, y: 0.5 }}
-    style={styles.specialSystemMessageBubble}
-  >
-    <Text style={styles.messageText}>{item.text}</Text>
-  </LinearGradient>
-) : (
-  <View style={styles.systemMessageBubble}>
-    <Text style={styles.messageText}>{item.text}</Text>
-  </View>
-)}
+            <LinearGradient
+              colors={["#2D2128", "#3A2B33"]} // tweak as needed
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={styles.specialSystemMessageBubble}
+            >
+              <Text style={styles.messageText}>{item.text}</Text>
+            </LinearGradient>
+          ) : (
+            <View style={styles.systemMessageBubble}>
+              <Text style={styles.messageText}>{item.text}</Text>
+            </View>
+          )}
 
             <Image
               source={require("@/components/HomePage/assets/images/profile1.png")}

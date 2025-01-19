@@ -1,10 +1,14 @@
-import { StyleSheet, ScrollView, View, Text } from "react-native";
+import { StyleSheet, ScrollView, View, Text, Dimensions } from "react-native";
 import InBetween from "./InBetween";
 import SelectedValue from "./SelectedValue";
 import PreviewTimeValue from "./PreviewTimeValues";
 import { useRef, useState } from "react";
 import React from "react";
 import { TEXT_STYLES, COLORS } from "@/app/styles";
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const ITEM_WIDTH = 24;
+const ITEM_GAP = 6;
 
 type ScrollPickerProps = {
     onTimeChange: (time: string) => void;
@@ -18,102 +22,208 @@ type TimeUnit = {
 
 export default function ScrollPicker({ onTimeChange }: ScrollPickerProps) {
     const scrollViewRef = useRef<ScrollView>(null);
-    const [selectedIndex, setSelectedIndex] = useState<number>(0);
+    const [selectedTime, setSelectedTime] = useState("12:00 AM");
 
+    // Generate time units from 12 AM to 12 PM
     const timeUnits: TimeUnit[] = [];
-    for (let hour = 6; hour <= 12; hour++) {
-        timeUnits.push({
-            hour,
-            minute: 0,
-            timeLetters: hour >= 12 ? "PM" : "AM",
-        });
+    
+    // Start with 12 AM
+    timeUnits.push({ hour: 12, minute: 0, timeLetters: "AM" });
+    timeUnits.push(
+        { hour: 12, minute: 15, timeLetters: "AM" },
+        { hour: 12, minute: 30, timeLetters: "AM" },
+        { hour: 12, minute: 45, timeLetters: "AM" }
+    );
 
-        if (hour < 12) {
-            timeUnits.push(
-                { hour, minute: 15, timeLetters: hour >= 12 ? "PM" : "AM" },
-                { hour, minute: 30, timeLetters: hour >= 12 ? "PM" : "AM" },
-                { hour, minute: 45, timeLetters: hour >= 12 ? "PM" : "AM" }
-            );
-        }
+    // Add 1 AM to 11 AM
+    for (let hour = 1; hour <= 11; hour++) {
+        timeUnits.push({ hour, minute: 0, timeLetters: "AM" });
+        timeUnits.push(
+            { hour, minute: 15, timeLetters: "AM" },
+            { hour, minute: 30, timeLetters: "AM" },
+            { hour, minute: 45, timeLetters: "AM" }
+        );
     }
+
+    // Add 12 PM
+    timeUnits.push({ hour: 12, minute: 0, timeLetters: "PM" });
+    timeUnits.push(
+        { hour: 12, minute: 15, timeLetters: "PM" },
+        { hour: 12, minute: 30, timeLetters: "PM" },
+        { hour: 12, minute: 45, timeLetters: "PM" }
+    );
+
+    // Add 1 PM to 11 PM
+    for (let hour = 1; hour <= 11; hour++) {
+        timeUnits.push({ hour, minute: 0, timeLetters: "PM" });
+        timeUnits.push(
+            { hour, minute: 15, timeLetters: "PM" },
+            { hour, minute: 30, timeLetters: "PM" },
+            { hour, minute: 45, timeLetters: "PM" }
+        );
+    }
+
+    const totalItemWidth = ITEM_WIDTH + ITEM_GAP;
 
     const handleScroll = (event: any) => {
         const offsetX = event.nativeEvent.contentOffset.x;
-        const itemWidth = 36; // Width of each item including gap
-        const index = Math.round(offsetX / itemWidth);
-
-        if (index !== selectedIndex) {
-            setSelectedIndex(index);
-            const selectedTime = timeUnits[index];
-            const displayHour = selectedTime.hour > 12 ? selectedTime.hour - 12 : selectedTime.hour;
-            const formattedTime = `${displayHour}:${selectedTime.minute.toString().padStart(2, "0")} ${selectedTime.timeLetters}`;
+        const index = Math.round(offsetX / totalItemWidth);
+        
+        if (index >= 0 && index < timeUnits.length) {
+            const selectedTimeUnit = timeUnits[index];
+            const formattedTime = `${selectedTimeUnit.hour}:${selectedTimeUnit.minute
+                .toString()
+                .padStart(2, "0")} ${selectedTimeUnit.timeLetters}`;
+            setSelectedTime(formattedTime);
             onTimeChange(formattedTime);
         }
     };
 
-    const renderTimeUnit = (unit: TimeUnit, index: number) => {
-        if (index === selectedIndex) {
+    const isTimeUnitSelected = (unit: TimeUnit) => {
+        const [time, period] = selectedTime.split(' ');
+        const [hour, minute] = time.split(':').map(Number);
+        return unit.hour === hour && 
+               unit.minute === minute && 
+               unit.timeLetters === period;
+    };
+
+    const renderTimeUnit = (unit: TimeUnit) => {
+        const isSelected = isTimeUnitSelected(unit);
+        
+        if (unit.minute === 0) {
             return (
-                <View key={index} style={styles.selectedContainer}>
-                    {/* Selected Time Text */}
-                    <Text style={styles.selectedTimeText}>
-                        {`${unit.hour > 12 ? unit.hour - 12 : unit.hour}:${unit.minute
-                            .toString()
-                            .padStart(2, "0")} ${unit.timeLetters}`}
-                    </Text>
-                    {/* Selected Value Line */}
-                    <SelectedValue />
+                <View style={styles.tickContainer}>
+                    <View style={styles.hourTick} />
                 </View>
             );
         }
-
-        if (unit.minute === 0) {
-            return (
-                <PreviewTimeValue
-                    key={index}
-                    timeNumber={unit.hour}
-                    timeLetters={unit.timeLetters}
-                />
-            );
-        }
-
-        return <InBetween key={index} />;
+        return (
+            <View style={styles.tickContainer}>
+                <View style={[styles.diamond, isSelected && styles.selectedDiamond]} />
+                <View style={[styles.minuteTick, isSelected && styles.selectedMinuteTick]} />
+            </View>
+        );
     };
 
     return (
-        <ScrollView
-            ref={scrollViewRef}
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.contentContainer}
-            horizontal={true}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={36} // Width of each item including gap
-            decelerationRate="fast"
-            snapToAlignment="center"
-        >
-            {timeUnits.map((unit, index) => renderTimeUnit(unit, index))}
-        </ScrollView>
+        <View style={styles.container}>
+            {/* Fixed Time Display */}
+            <View style={styles.timeDisplayContainer}>
+                <Text style={styles.selectedTimeText}>
+                    {selectedTime}
+                </Text>
+            </View>
+            
+            {/* Fixed Center Indicator */}
+            <View style={styles.centerIndicator} />
+
+            {/* Scrollable Timeline */}
+            <ScrollView
+                ref={scrollViewRef}
+                style={styles.scrollContainer}
+                contentContainerStyle={styles.contentContainer}
+                horizontal={true}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={totalItemWidth}
+                decelerationRate="fast"
+                snapToAlignment="center"
+            >
+                {timeUnits.map((unit, index) => (
+                    <View key={index} style={styles.timeUnitContainer}>
+                        {renderTimeUnit(unit)}
+                    </View>
+                ))}
+            </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        height: 120,
+        width: SCREEN_WIDTH,
+        backgroundColor: "black",
+        borderRadius: 12,
+        overflow: "hidden",
+    },
+    timeDisplayContainer: {
+        position: "absolute",
+        top: 10,
+        left: 0,
+        right: 0,
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 2,
+    },
+    selectedTimeText: {
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "white",
+    },
+    centerIndicator: {
+        position: "absolute",
+        left: "50%",
+        bottom: 40,
+        width: 3,
+        height: 40,
+        backgroundColor: "white",
+        zIndex: 3,
+    },
     scrollContainer: {
+        position: "absolute",
+        bottom: 0,
         flexDirection: "row",
     },
     contentContainer: {
         flexDirection: "row",
-        alignItems: "flex-end",
-        gap: 12,
-        paddingHorizontal: "50%", // Space on both sides
+        alignItems: "center",
+        gap: ITEM_GAP,
+        paddingHorizontal: SCREEN_WIDTH / 2 - ITEM_WIDTH / 2,
     },
-    selectedContainer: {
-        flexDirection: "column",
-        alignItems: "center", // Center text and line together
+    timeUnitContainer: {
+        width: ITEM_WIDTH,
+        alignItems: "center",
     },
-    selectedTimeText: {
-        ...TEXT_STYLES.timePickerNumber,
-        color: COLORS.suadeShadesWhite,
+    tickContainer: {
+        alignItems: "center",
+        width: ITEM_WIDTH,
+    },
+    hourTick: {
+        width: 3,
+        height: 50,
+        backgroundColor: "white",
+        opacity: 1,
+    },
+    minuteTick: {
+        width: 4,
+        height: 40,
+        backgroundColor: "gray",
+        borderRadius: 2,
+        marginBottom: -10,
+        alignItems: "center",
+    },
+    selectedMinuteTick: {
+        backgroundColor: "white",
+    },
+    diamond: {
+        width: 8,
+        height: 8,
+        backgroundColor: "gray",
+        transform: [{ rotate: "45deg" }],
+        position: "absolute",
+        top: -10,
+        left: "50%",
+        marginLeft: -4,
+    },
+    selectedDiamond: {
+        backgroundColor: "white",
+    },
+    hourText: {
+        color: "white",
+        fontSize: 14,
+        fontWeight: "500",
+        marginTop: 6,
     },
 });
