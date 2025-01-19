@@ -202,9 +202,7 @@ const Identity = ({ onComplete }: { onComplete: () => void }) => {
                 </View>
               </BlurView>
             </View>
-
             {renderStep()}
-
             <View style={styles.flexGrowSpacer} />
 
             <View style={styles.nextButtonOuterContainer}>

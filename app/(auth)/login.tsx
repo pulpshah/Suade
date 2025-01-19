@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  Image, 
+  StyleSheet, 
+  SafeAreaView, 
+  KeyboardAvoidingView, 
+  Platform,
+  ScrollView 
+} from "react-native";
 import { router } from "expo-router";
 import { useAuth } from "@/context/auth";
 
@@ -14,8 +25,17 @@ export default function Login() {
   };
 
   return (
-    <View style={styles.gradient}>
-      <View style={styles.blackOverlay}>
+    <SafeAreaView style={styles.gradient}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoid}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          bounces={false}
+          keyboardShouldPersistTaps="handled"
+        >
         <View style={styles.outerContainer}>
           {/* Back Arrow */}
           <TouchableOpacity style={styles.backArrow} onPress={() => router.push("/")}>
@@ -83,14 +103,23 @@ export default function Login() {
             <Text style={styles.forgotPassword}>Forgot your password?</Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,
+    backgroundColor: '#000000',
+  },
+  keyboardAvoid: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   blackOverlay: {
     position: "absolute",
@@ -112,7 +141,7 @@ const styles = StyleSheet.create({
     left: 20,
   },
   backArrowText: {
-    fontSize: 20,
+    fontSize: 40,
     color: "#FFFFFF",
   },
   logoAndHeaderContainer: {
@@ -169,10 +198,10 @@ const styles = StyleSheet.create({
     color: "white",
   },
   eyeButton: {
-    padding: 12,
+    padding: 16,
   },
   eyeIcon: {
-    width: 25,
+    width: 24,
     height: 18,
     tintColor: "#FFFFFF",
   },
