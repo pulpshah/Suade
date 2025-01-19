@@ -441,6 +441,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     marginTop: 20,
+    
   },
   chatContainer: {
     flexGrow: 1,
