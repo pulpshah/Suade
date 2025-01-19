@@ -40,7 +40,7 @@ export default function SwipedLeftInvalidCard() {
                 </View>
                 <View style={styles.questionTextContainer}>
                     <Text style={styles.questionText}>
-                        Adults who enjoy sour candy aren’t very mature.
+                    Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning?
                     </Text>
                 </View>
             </View>
