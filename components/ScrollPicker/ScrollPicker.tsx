@@ -12,6 +12,7 @@ const ITEM_GAP = 6;
 
 type ScrollPickerProps = {
     onTimeChange: (time: string) => void;
+    mode?: "hour" | "minutes";
 };
 
 type TimeUnit = {
@@ -20,13 +21,22 @@ type TimeUnit = {
     timeLetters: string;
 };
 
-export default function ScrollPicker({ onTimeChange }: ScrollPickerProps) {
+export default function ScrollPicker({ onTimeChange,mode = "hour" }: ScrollPickerProps) {
     const scrollViewRef = useRef<ScrollView>(null);
     const [selectedTime, setSelectedTime] = useState("12:00 AM");
 
     // Generate time units from 12 AM to 12 PM
     const timeUnits: TimeUnit[] = [];
-    
+    if (mode === "minutes") {
+           // Simply generate 0..60 as "minutes"
+           for (let m = 0; m <= 60; m++) {
+             timeUnits.push({
+               hour: 0,
+               minute: m,
+               timeLetters: "", // No AM/PM needed
+             });
+           }
+         } else {
     // Start with 12 AM
     timeUnits.push({ hour: 12, minute: 0, timeLetters: "AM" });
     timeUnits.push(
@@ -62,24 +72,38 @@ export default function ScrollPicker({ onTimeChange }: ScrollPickerProps) {
             { hour, minute: 45, timeLetters: "PM" }
         );
     }
+}
 
     const totalItemWidth = ITEM_WIDTH + ITEM_GAP;
 
     const handleScroll = (event: any) => {
         const offsetX = event.nativeEvent.contentOffset.x;
         const index = Math.round(offsetX / totalItemWidth);
-        
+      
         if (index >= 0 && index < timeUnits.length) {
-            const selectedTimeUnit = timeUnits[index];
-            const formattedTime = `${selectedTimeUnit.hour}:${selectedTimeUnit.minute
-                .toString()
-                .padStart(2, "0")} ${selectedTimeUnit.timeLetters}`;
-            setSelectedTime(formattedTime);
-            onTimeChange(formattedTime);
+          const selectedTimeUnit = timeUnits[index];
+          let formattedTime = "";
+      
+          if (mode === "minutes") {
+            formattedTime = `${selectedTimeUnit.minute} min`;
+          } else {
+            formattedTime = `${selectedTimeUnit.hour}:${selectedTimeUnit.minute
+              .toString()
+              .padStart(2, "0")} ${selectedTimeUnit.timeLetters}`;
+          }
+      
+          setSelectedTime(formattedTime);
+          onTimeChange(formattedTime);
         }
-    };
+      };
+      
 
     const isTimeUnitSelected = (unit: TimeUnit) => {
+           if (mode === "minutes") {
+                 // Check if minute matches
+                 const numeric = parseInt(selectedTime);
+                 return numeric === unit.minute;
+               }
         const [time, period] = selectedTime.split(' ');
         const [hour, minute] = time.split(':').map(Number);
         return unit.hour === hour && 
@@ -89,21 +113,45 @@ export default function ScrollPicker({ onTimeChange }: ScrollPickerProps) {
 
     const renderTimeUnit = (unit: TimeUnit) => {
         const isSelected = isTimeUnitSelected(unit);
-        
-        if (unit.minute === 0) {
+      
+        if (mode === "minutes") {
+          // For multiples of 5, use hourTick styling
+          if (unit.minute % 5 === 0) {
             return (
-                <View style={styles.tickContainer}>
-                    <View style={styles.hourTick} />
-                </View>
+              <View style={styles.tickContainer}>
+                <View style={[styles.hourTick, isSelected && styles.selectedMinuteTick]} />
+              </View>
             );
-        }
-        return (
-            <View style={styles.tickContainer}>
+          } else {
+            // For other minutes, use minuteTick + diamond styling
+            return (
+              <View style={styles.tickContainer}>
                 <View style={[styles.diamond, isSelected && styles.selectedDiamond]} />
                 <View style={[styles.minuteTick, isSelected && styles.selectedMinuteTick]} />
+              </View>
+            );
+          }
+        }
+      
+        // For hour mode, keep the existing logic
+        if (unit.minute === 0) {
+          return (
+            <View style={styles.tickContainer}>
+              <View style={styles.hourTick} />
             </View>
+          );
+        }
+      
+        // For 15, 30, 45 minutes in hour mode
+        return (
+          <View style={styles.tickContainer}>
+            <View style={[styles.diamond, isSelected && styles.selectedDiamond]} />
+            <View style={[styles.minuteTick, isSelected && styles.selectedMinuteTick]} />
+          </View>
         );
-    };
+      };
+      
+      
 
     return (
         <View style={styles.container}>
@@ -226,4 +274,13 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         marginTop: 6,
     },
+    longMinuteTick: {
+        width: 3,
+        height: 50,
+        backgroundColor: "gray", // Default color
+        opacity: 1,
+      },
+    //   selectedMinuteTick: {
+    //     backgroundColor: "white", // Highlight selected tick
+    //   },
 });

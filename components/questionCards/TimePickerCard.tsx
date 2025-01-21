@@ -1,13 +1,19 @@
 import React from "react";
 import { View, StyleSheet, ImageBackground } from "react-native";
 import ScrollPicker from "../ScrollPicker/ScrollPicker";
-
+import { useEffect } from "react";
 type TimePickerCardProps = {
     selectedTime: string | null;
     setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
+    mode?: "hour" | "minutes"; 
 };
 
-export default function TimePickerCard({ selectedTime, setSelectedTime }: TimePickerCardProps) {
+export default function TimePickerCard({ selectedTime, setSelectedTime,mode = "hour"}: TimePickerCardProps) {
+    useEffect(() => {
+        if (selectedTime === null) {
+            setSelectedTime("12:00 AM"); // Set default time on reset
+        }
+    }, [selectedTime]);
     return (
         <View style={styles.shadowContainer}>
             <ImageBackground
@@ -18,7 +24,8 @@ export default function TimePickerCard({ selectedTime, setSelectedTime }: TimePi
                 <View style={styles.outerContainer}>
                     {/* Time Picker */}
                     <View style={styles.timePickerContainer}>
-                        <ScrollPicker onTimeChange={setSelectedTime} />
+                        {/* <ScrollPicker onTimeChange={setSelectedTime} /> */}
+                        <ScrollPicker onTimeChange={setSelectedTime} mode={mode} />
                     </View>
                 </View>
             </ImageBackground>
