@@ -61,8 +61,7 @@ const styles = StyleSheet.create({
     buttonText: {
         ...TEXT_STYLES.lgButtonText,
         color: "#000",
-        textShadowColor: "rgba(31, 31, 31, 0.24)",
-        textShadowRadius: 6,
+        textShadowColor: "#1F1F1F3D",
     },
     disabledOuterContainer: {
         opacity: 0.6, // Visually indicate a disabled state

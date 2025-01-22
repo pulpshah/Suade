@@ -9,7 +9,6 @@ export default function UserTypingBubble() {
                 <View style={styles.fallbackBackground}>
                     <View style={styles.innerContainer}>
                         <View style={styles.innerContainerBackgroundFallback}>
-                            {/* Adding ellipses */}
                             <View style={styles.ellipsesContainer}>
                                 <View style={[styles.dot, styles.leftDot]} />
                                 <View style={[styles.dot, styles.middleDot]} />

@@ -48,10 +48,10 @@ const TEXT_STYLES: { [key: string]: TextStyle } = {
     },   
     lgButtonText: {
         fontFamily: "NotoSans",
-        fontWeight: "400",
+        fontWeight: "500",
         fontSize: 18,
         lineHeight: 24,
-        letterSpacing: 0.3
+        letterSpacing: 0.3,
     },
     inputText: {
         fontFamily: "NotoSans",
@@ -114,11 +114,24 @@ const TEXT_STYLES: { [key: string]: TextStyle } = {
         lineHeight: 5.92,
         letterSpacing: .12
     },
+    questionOptionsText: {
+        fontFamily: "NotoSans",
+        fontSize: 14,
+        lineHeight: 16.8,
+        letterSpacing: .3,
+    },
+    onboardingTitle: {
+        fontFamily: "RocGroteskBold",
+        fontSize: 29,
+        lineHeight: 33.6,
+        letterSpacing: .5,
+    },
 }
 
 const COLORS = {
         black40: 'rgba(13, 9, 10, 0.4)',
         black20: 'rgba(13, 9, 10, 0.2)',
+        black75: 'RGBA(13, 9, 10, .75',
         white60: 'rgba(234, 242, 239, 0.6)',
         white12: 'rgba(234, 242, 239, 0.12)', 
         white6: 'rgba(234, 242, 239, 0.06)',
