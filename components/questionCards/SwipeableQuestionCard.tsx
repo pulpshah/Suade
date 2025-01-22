@@ -41,7 +41,7 @@ export default function SwipeableQuestionCard() {
                 </View>
                 <View style={styles.questionTextContainer}>
                     <Text style={styles.questionText}>
-                        Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning Do you check your phone first thing in the morning?
+                        Do you check your phone first thing in the morning?
                     </Text>
                 </View>
             </View>

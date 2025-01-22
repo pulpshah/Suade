@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, ImageBackground } from "react-native";
 import NewScrollPicker from "../ScrollPicker/NewScrollPicker";
+import FlowShadow from "@/assets/gradients/flow-shadow-medium.svg"
 
 type NewTimePickerCardProps = {
   selectedTime: string | null;
@@ -19,17 +20,15 @@ export default function NewTimePickerCard({
 
   return (
     <View style={styles.shadowContainer}>
-      <ImageBackground
-        source={require("@/assets/images/Flow Shadow.png")}
+      <FlowShadow
         style={styles.backgroundImage}
-        resizeMode="cover"
       >
         <View style={styles.outerContainer}>
           <View style={styles.timePickerContainer}>
             <NewScrollPicker onTimeChange={setSelectedTime} />
           </View>
         </View>
-      </ImageBackground>
+      </FlowShadow>
     </View>
   );
 }

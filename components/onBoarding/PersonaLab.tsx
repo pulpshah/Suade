@@ -17,6 +17,13 @@ import TimePickerCard from "../questionCards/TimePickerCard";
 import PrimaryLargeButton from "../Buttons/PrimaryLargeButton";
 import SwipeableCardManager from "../questionCards/SwipeableCardManager";
 import OptionsCard from "./optionsCard";
+import CoffeePicker from "./CoffeePicker";
+import ValidBubble from "../bubbleTypes/ValidBubble";
+import InvalidBubble from "../bubbleTypes/InvalidBubble";
+import ChevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
+import ThirdPersonBubble from "../bubbleTypes/ThirdPersonBubble";
+import UserMessageBubble from "../bubbleTypes/UserMessageBubble";
+import { TEXT_STYLES } from "@/app/styles";
 
 type Message = {
   id: string;
@@ -24,6 +31,7 @@ type Message = {
   text?: string;
   type?: string;
   questionNumber?: number;
+  component?: React.ReactNode;
 };
 
 export default function PersonaLab() {
@@ -31,6 +39,7 @@ export default function PersonaLab() {
   const [isTyping, setIsTyping] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<number>(1);
+  const [selectedPublication, setSelectedPublication] = useState<string | null>(null);
 
   const flatListRef = useRef<FlatList>(null);
   let messageCounter = 0;
@@ -45,14 +54,15 @@ export default function PersonaLab() {
   };
 
   const handleCardSwipe = (direction: "valid" | "invalid") => {
-    const icon = direction === "valid" ? "✅" : "❌";
-
+    // Determine which component to use based on the swipe direction
+    const BubbleComponent = direction === "valid" ? <ValidBubble /> : <InvalidBubble />;
+  
     setMessages((prev) => [
       ...prev,
       {
-        id: `swipe-icon-${messageCounter++}-${Date.now()}`,
+        id: `swipe-bubble-${messageCounter++}-${Date.now()}`,
         sender: "user",
-        text: icon,
+        component: BubbleComponent, // Use the respective bubble component
       },
       {
         id: `swipe-followup-${messageCounter++}-${Date.now()}`,
@@ -60,7 +70,7 @@ export default function PersonaLab() {
         text: "Cool!",
       },
     ]);
-
+  
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
@@ -70,10 +80,10 @@ export default function PersonaLab() {
           text: "A follow-up on that question",
         },
       ]);
-
+  
       setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
-
+  
         setTimeout(() => {
           setMessages((prev) => [
             ...prev,
@@ -173,13 +183,15 @@ export default function PersonaLab() {
               id: `bot-next-question-${messageCounter++}-${Date.now()}`,
               sender: "system",
               component: (
-                <Text style={styles.messageText}>
-                  This time, swipe on that card:{" "}
-                  <Text style={styles.invalidText}>Left for Invalid</Text> or{" "}
-                  <Text style={styles.validText}>Right for Valid</Text>.
-                </Text>
+                <ThirdPersonBubble>
+                  <Text style={styles.instructionsText}>
+                    This time, swipe on that card:{" "}
+                    <Text style={styles.invalidText}>Left for Invalid</Text>{" "}
+                    or <Text style={styles.validText}>Right for Valid</Text>.
+                  </Text>
+                </ThirdPersonBubble>
               ),
-            },
+          },
             {
               id: `widgets-${messageCounter++}`,
               sender: "user",
@@ -244,45 +256,76 @@ export default function PersonaLab() {
     ]);
   }, 1000);
 }
-
-    setSelectedTime(null);
-    setIsTyping(false);
+if (currentQuestion === 4) {
+  setTimeout(() => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `bot-next-question-${messageCounter++}-${Date.now()}`,
+        sender: "system",
+        text: "How many cups of coffee do you drink each day?",
+      },
+      {
+        id: `coffee-picker-${messageCounter++}`,
+        sender: "user",
+        type: "coffeePicker",
+      },
+    ]);
+    setCurrentQuestion(5);
+  }, 1000);
+}
   };
 
-  const renderItem = ({ item }: { item: Message }) => {
-    if (item.type === "timedNotif") {
-      return (
-        <View style={styles.widgetContainer}>
-          <TimedNotif notificationText="No need to overthink it" seconds={30} />
-        </View>
-      );
-    }
+const renderItem = ({ item }: { item: Message }) => {
+  if (item.type === "coffeePicker") {
+    return (
+      <View style={styles.widgetContainer}>
+        <QuestionCard
+          questionNumber={4}
+          questionText="How many cups of coffee do you drink each day?"
+        />
+        <CoffeePicker
+          onConfirm={(numCups) => {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: `coffee-response-${messageCounter++}-${Date.now()}`,
+                sender: "user",
+                text: `I drink ${numCups} cup${numCups !== 1 ? "s" : ""} of coffee.`,
+              },
+              {
+                id: `bot-next-${messageCounter++}-${Date.now()}`,
+                sender: "system",
+                text: "Thanks for sharing! Let's continue...",
+              },
+              {
+                id: `options-card-${messageCounter++}-${Date.now()}`,
+                sender: "system",
+                type: "optionsCard",
+                questionNumber: 5,
+                text: "How quickly do you read incoming emails?",
+              },
+            ]);
+            setCurrentQuestion(5);
+          }}
+        />
+      </View>
+    );
+  }
   
-    // For QuestionCard type
-    if (item.type === "questionCard") {
+  if (item.type === "optionsCard") {
+    if (item.questionNumber === 3) {
       return (
         <View style={styles.widgetContainer}>
           <QuestionCard
-            questionNumber={item.questionNumber || 1}
-            questionText={
-              item.questionNumber === 1
-                ? "When do you usually wake up and begin your day?"
-                : item.questionNumber === 2
-                ? "If yes, how much time do you spend on your phone before starting your day?"
-                : "Which two notifications are you most tempted to tap on first?"
-            }
+            questionNumber={3}
+            questionText="Which notifications are you most tempted to tap on first?"
           />
-        </View>
-      );
-    }
-    if (item.type === "optionsCard") {
-      return (
-        <View style={styles.widgetContainer}>
           <OptionsCard
             options={[
               { id: "a", label: "Organizational apps (e.g. Google Calendar, Notion)" },
               { id: "b", label: "News apps (e.g. BBC, NYT, Wall Street Journal)" },
-              { id: "c", label: "Adults who enjoy sour candy aren’t     very mature." },
+              { id: "c", label: "Adults who enjoy sour candy aren't very mature." },
               { id: "d", label: "Social media apps (e.g. Instagram, Facebook, Twitter)" },
             ]}
             maxSelections={2}
@@ -295,12 +338,151 @@ export default function PersonaLab() {
                   text: `Selected: ${selectedOptions.join(", ")}`,
                 },
               ]);
+
+              setTimeout(() => {
+                setMessages((prev) => [
+                  ...prev,
+                  {
+                    id: `bot-next-question-${messageCounter++}-${Date.now()}`,
+                    sender: "system",
+                    text: "Next up for the coffee lovers:",
+                  },
+                  {
+                    id: `coffee-picker-${messageCounter++}-${Date.now()}`,
+                    sender: "user",
+                    type: "coffeePicker",
+                  },
+                ]);
+                setCurrentQuestion(4);
+              }, 1000);
+            }}
+          />
+        </View>
+      );
+    } else if (item.questionNumber === 5) {
+      return (
+        <View style={styles.widgetContainer}>
+          <QuestionCard
+            questionNumber={5}
+            questionText="How quickly do you read incoming emails?"
+          />
+          <OptionsCard
+            options={[
+              { id: "a", label: "Immediately upon receiving them" },
+              { id: "b", label: "Within a few hours" },
+              { id: "c", label: "After a while" },
+            ]}
+            maxSelections={1}
+            onConfirm={(selectedOptions) => {
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: `options-response-${messageCounter++}-${Date.now()}`,
+                  sender: "user",
+                  text: `Selected: ${selectedOptions.join(", ")}`,
+                },
+                {
+                  id: `bot-next-${messageCounter++}-${Date.now()}`,
+                  sender: "system",
+                  text: "Thanks for sharing! Let's move on...",
+                },
+                {
+                  id: `options-card-${messageCounter++}-${Date.now()}`,
+                  sender: "system",
+                  type: "optionsCard",
+                  questionNumber: 6,
+                  text: "Which of these publications would you most likely choose?",
+                },
+              ]);
+              setCurrentQuestion(6);
+            }}
+          />
+        </View>
+      );
+    } else if (item.questionNumber === 6) {
+      return (
+        <View style={styles.widgetContainer}>
+          <QuestionCard
+            questionNumber={6}
+            questionText="Which of these publications would you most likely choose?"
+          />
+          <OptionsCard
+            options={[
+              { id: "a", label: "NYT" },
+              { id: "b", label: "Washington Post" },
+              { id: "c", label: "Forbes" },
+            ]}
+            maxSelections={1}
+            onConfirm={(selectedLabels) => {
+              const selectedPub = selectedLabels[0]; // Assuming maxSelections is 1
+              setSelectedPublication(selectedPub);
+            
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: `options-response-${messageCounter++}-${Date.now()}`,
+                  sender: "user",
+                  text: `Selected: ${selectedPub}`,
+                },
+                {
+                  id: `bot-next-${messageCounter++}-${Date.now()}`,
+                  sender: "system",
+                  text: "Next question coming up...",
+                },
+              ]);
+            
+              setTimeout(() => {
+                setMessages((prev) => [
+                  ...prev,
+                  {
+                    id: `question-7-${messageCounter++}-${Date.now()}`,
+                    sender: "system",
+                    type: "optionsCard",
+                    questionNumber: 7,
+                    text: `Someone shares information they read on ${selectedPub}. What are you likely to do with this information?`,
+                  },
+                ]);
+                setCurrentQuestion(7);
+              }, 1000);
+            }}
+          />
+        </View>
+      );
+    } else if (item.questionNumber === 7) {
+      return (
+        <View style={styles.widgetContainer}>
+          <QuestionCard
+            questionNumber={7}
+            questionText={`Someone shares information they read on ${selectedPublication}. What are you likely to do with this information?`}
+          />
+          <OptionsCard
+            options={[
+              { id: "a", label: "Believe that person" },
+              { id: "b", label: "Question it and fact-check on other sites" },
+            ]}
+            maxSelections={1}
+            onConfirm={(selectedOptions) => {
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: `options-response-${messageCounter++}-${Date.now()}`,
+                  sender: "user",
+                  text: `Selected: ${selectedOptions[0]}`,
+                },
+                {
+                  id: `bot-next-${messageCounter++}-${Date.now()}`,
+                  sender: "system",
+                  text: "Thanks for your input! Moving on...",
+                },
+              ]);
+              setCurrentQuestion(8);
             }}
           />
         </View>
       );
     }
-    
+  }
+  
     if (item.type === "timePickerCard") {
       return (
         <View style={styles.widgetContainer}>
@@ -324,9 +506,7 @@ export default function PersonaLab() {
             <View style={styles.confirmButtonContainer}>
               <PrimaryLargeButton
                 buttonText={`Confirm (${
-                  item.questionNumber === 2 
-                    ? `${selectedTime}s` 
-                    : selectedTime
+                  item.questionNumber === 2 ? `${selectedTime}s` : selectedTime
                 })`}
                 onPress={handleConfirm}
                 disabled={!selectedTime}
@@ -336,15 +516,76 @@ export default function PersonaLab() {
         </View>
       );
     }
-
+  
     if (item.type === "swipeableCard") {
       return (
-        <View style={styles.widgetContainer}>
+        <View>
           <SwipeableCardManager onSwipe={handleCardSwipe} />
         </View>
       );
     }
+  
+    const isBubbleComponent =
+    React.isValidElement(item.component) &&
+    (item.component.type === ValidBubble || item.component.type === InvalidBubble);
 
+  // Text-based user messages
+  if (item.sender === "user" && item.text) {
+    return (
+      <View style={styles.userMessageContainer}>
+        <UserMessageBubble messageText={item.text} />
+        <Image
+          source={require("@/components/HomePage/assets/images/profile1.png")}
+          style={[styles.profileImage, styles.userProfileImage]}
+        />
+      </View>
+    );
+  }
+  // Text-based system messages (bot)
+  if (item.sender === "system" && item.text) {
+    return (
+      <View style={styles.systemMessageContainer}>
+        <Image
+          source={require("@/components/HomePage/assets/images/profile1.png")}
+          style={styles.profileImage}
+        />
+        <ThirdPersonBubble>{item.text}</ThirdPersonBubble>
+      </View>
+    );
+  }
+
+  if (item.component) {
+    const isThirdPersonBubble = React.isValidElement(item.component) && item.component.type === ThirdPersonBubble;
+
+    return (
+        <View style={styles.messageWrapper}>
+            {item.sender === "system" && (
+                <View style={styles.systemMessageContainer}>
+                    <Image
+                        source={require("@/components/HomePage/assets/images/profile1.png")}
+                        style={styles.profileImage}
+                    />
+                    {isThirdPersonBubble ? (
+                        item.component // Render `ThirdPersonBubble` directly
+                    ) : (
+                        <View style={styles.systemMessageBubble}>{item.component}</View>
+                    )}
+                </View>
+            )}
+
+            {item.sender === "user" && (
+                <View style={styles.userMessageContainer}>
+                    {item.component}
+                    <Image
+                        source={require("@/components/HomePage/assets/images/profile1.png")}
+                        style={[styles.profileImage, styles.userProfileImage]}
+                    />
+                </View>
+            )}
+        </View>
+    );
+}
+  
     return (
       <View style={styles.messageWrapper}>
         {item.sender === "system" && (
@@ -358,7 +599,7 @@ export default function PersonaLab() {
             </View>
           </View>
         )}
-
+  
         {item.sender === "user" && (
           <View style={styles.userMessageContainer}>
             {item.text ? (
@@ -377,6 +618,7 @@ export default function PersonaLab() {
       </View>
     );
   };
+  
 
   return (
     <KeyboardAvoidingView
@@ -384,8 +626,8 @@ export default function PersonaLab() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backArrow}>{"<"}</Text>
+        <TouchableOpacity style={styles.backArrowContainer} onPress={() => router.back()}>
+          <ChevronLeftIcon width={8} height={16} />
         </TouchableOpacity>
         <Text style={styles.subHeader}>Persona Lab</Text>
       </View>
@@ -404,33 +646,39 @@ export default function PersonaLab() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: "#000" 
+    backgroundColor: "#000",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: 16,
     paddingVertical: 16,
     paddingHorizontal: 16,
   },
-  backArrow: { 
-    fontSize: 20, 
-    color: "#fff" 
+  backArrowContainer: { 
+    width: 32,
+    height: 32,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
   },
   subHeader: { 
-    fontSize: 40, 
-    color: "#fff", 
-    fontWeight: "bold" 
+    ...TEXT_STYLES.onboardingTitle,
+    color: '#FFFFFF',
+    textShadowColor: '#1F1F1F3D',
+    textShadowRadius: 6,
   },
   chatContainer: { 
     flexGrow: 1, 
-    paddingHorizontal: 16 
+    padding: 12,
   },
   messageWrapper: { 
-    marginBottom: 10 
+    marginBottom: 4 
   },
   systemMessageContainer: { 
     flexDirection: "row", 
-    alignItems: "center" 
+    alignItems: "center", 
+    marginTop: 4,
+    gap: 8,
   },
   systemMessageBubble: {
     backgroundColor: "#333",
@@ -443,6 +691,7 @@ const styles = StyleSheet.create({
   },
   userMessageContainer: {
     flexDirection: "row",
+    marginTop: 10,
     justifyContent: "flex-end",
     alignItems: "center",
   },
@@ -474,12 +723,18 @@ const styles = StyleSheet.create({
     marginTop: 16,
     alignSelf: "center",
   },
+  instructionsText: {
+    ...TEXT_STYLES.medium,
+    color: "white",
+    flexWrap: "wrap",
+    width: "100%",
+  },
   invalidText: {
-    color: "red",
-    fontWeight: "bold",
+    ...TEXT_STYLES.medium,
+    color: '#FFA3A5',
   },
   validText: {
-    color: "blue",
-    fontWeight: "bold",
+    ...TEXT_STYLES.medium,
+    color: '#B5EDFD'
   },
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { TEXT_STYLES, COLORS } from "@/app/styles";
-import ValidColoredIcon from "@/assets/icons/valid-gray-icon.svg"
+import { COLORS } from "@/app/styles";
+import ValidColoredIcon from "@/assets/icons/valid-colored-icon.svg"
 
 export default function ValidBubble() {
     return (
